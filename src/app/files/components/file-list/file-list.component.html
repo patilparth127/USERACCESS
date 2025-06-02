@@ -1,0 +1,51 @@
+<nav aria-label="breadcrumb" class="p-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/home"><i class="bi bi-house-door"></i></a></li>
+    <li class="breadcrumb-item active">Files</li>
+  </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mt-2 p-4">
+  <h2>File Management</h2>
+  <!-- Only show Upload File button if user has permission -->
+  <a *ngIf="canUploadFile" routerLink="/files/upload" class="btn btn-primary">
+    <i class="bi bi-upload me-2"></i> Upload File
+  </a>
+</div>
+
+<div class="p-4">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Type</th>
+        <th>Uploaded Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let file of files">
+        <td>{{ file.name }}</td>
+        <td>{{ file.size }}KB</td>
+        <td>{{ file.type }}</td>
+        <td>{{ file.uploadedAt | date }}</td>
+        <td>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary" title="Download">
+              <i class="bi bi-download"></i>
+            </button>
+            
+            <!-- Delete button - only visible with DeleteFile permission -->
+            <button *ngIf="canDeleteFile"
+                    class="btn btn-sm btn-outline-danger" 
+                    title="Delete"
+                    (click)="deleteFile(file.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

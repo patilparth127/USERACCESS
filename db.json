@@ -1,0 +1,164 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "password": "password123",
+      "permissions": [
+        {
+          "moduleName": "UsersManagement",
+          "permissions": [
+            "Users.ViewUsers",
+            "Users.CreateUser",
+            "Users.UpdateUser",
+            "Users.DeleteUser"
+          ]
+        },
+        {
+          "moduleName": "RolesManagement",
+          "permissions": [
+            "Roles.ViewRoles",
+            "Roles.CreateRole",
+            "Roles.UpdateRole",
+            "Roles.DeleteRole"
+          ]
+        },
+        {
+          "moduleName": "FilesManagement",
+          "permissions": [
+            "Files.ViewFiles",
+            "Files.UploadFile",
+            "Files.DeleteFile"
+          ]
+        },
+        {
+          "moduleName": "ReportsManagement",
+          "permissions": [
+            "Reports.ViewReports",
+            "Reports.CreateReport",
+            "Reports.UpdateReport",
+            "Reports.DeleteReport",
+            "Reports.ViewReportDetail"
+          ]
+        },
+        {
+          "moduleName": "SettingsManagement",
+          "permissions": [
+            "Settings.ViewSettings",
+            "Settings.ManageAdvancedSettings"
+          ]
+        }
+      ],
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "Manager User",
+      "email": "manager@example.com",
+      "password": "password123",
+      "permissions": [
+        {
+          "moduleName": "UsersManagement",
+          "permissions": [
+            "Users.ViewUsers",
+            "Users.CreateUser",
+            "Users.UpdateUser"
+          ]
+        },
+        {
+          "moduleName": "FilesManagement",
+          "permissions": [
+            "Files.ViewFiles",
+            "Files.UploadFile"
+          ]
+        }
+      ],
+      "is_active": true,
+      "created_at": "2023-01-02T00:00:00.000Z",
+      "updated_at": "2023-01-02T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "Standard User",
+      "email": "user@example.com",
+      "password": "password123",
+      "permissions": [
+        {
+          "moduleName": "FilesManagement",
+          "permissions": [
+            "Files.ViewFiles"
+          ]
+        }
+      ],
+      "is_active": true,
+      "created_at": "2023-01-03T00:00:00.000Z",
+      "updated_at": "2023-01-03T00:00:00.000Z"
+    }
+  ],
+  "roles": [
+    {
+      "id": "1",
+      "name": "Administrator",
+      "description": "Full system access",
+      "permissions": [
+        {
+          "moduleName": "UsersManagement",
+          "permissions": [
+            "Users.ViewUsers",
+            "Users.CreateUser",
+            "Users.UpdateUser",
+            "Users.DeleteUser"
+          ]
+        },
+        {
+          "moduleName": "RolesManagement",
+          "permissions": [
+            "Roles.ViewRoles",
+            "Roles.CreateRole",
+            "Roles.UpdateRole",
+            "Roles.DeleteRole"
+          ]
+        },
+        {
+          "moduleName": "FilesManagement",
+          "permissions": [
+            "Files.ViewFiles",
+            "Files.UploadFile",
+            "Files.DeleteFile"
+          ]
+        }
+      ],
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "Manager",
+      "description": "Manage users and files",
+      "permissions": [
+        {
+          "moduleName": "UsersManagement",
+          "permissions": [
+            "Users.ViewUsers",
+            "Users.CreateUser",
+            "Users.UpdateUser"
+          ]
+        },
+        {
+          "moduleName": "FilesManagement",
+          "permissions": [
+            "Files.ViewFiles",
+            "Files.UploadFile"
+          ]
+        }
+      ],
+      "is_active": true,
+      "created_at": "2023-01-02T00:00:00.000Z",
+      "updated_at": "2023-01-02T00:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+html,
+body,
+.min-h-screen,
+.nz-layout {
+  height: 100%;
+  margin: 0;
+}
+
+.header-bg {
+  background-color: #f8f8f8;
+}

@@ -1,0 +1,11 @@
+html,
+body,
+.min-h-screen,
+.nz-layout {
+  height: 100%;
+  margin: 0;
+}
+
+.dark-color {
+  background-color: #1f2937;
+}

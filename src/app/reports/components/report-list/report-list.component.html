@@ -1,0 +1,66 @@
+<nav aria-label="breadcrumb" class="p-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/home"><i class="bi bi-house-door"></i></a></li>
+    <li class="breadcrumb-item active">Reports</li>
+  </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mt-2 p-4">
+  <h2>Report Management</h2>
+  <!-- Only show Create Report button if user has permission -->
+  <a *ngIf="canCreateReport" routerLink="/reports/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-2"></i> Create Report
+  </a>
+</div>
+
+<div class="p-4">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Report Name</th>
+        <th>Created Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let report of reports">
+        <td>{{ report.id }}</td>
+        <td>{{ report.name }}</td>
+        <td>{{ report.createdAt | date }}</td>
+        <td>
+          <span class="badge" [ngClass]="{
+            'bg-success': report.status === 'Active',
+            'bg-warning': report.status === 'Draft',
+            'bg-secondary': report.status === 'Archived'
+          }">{{ report.status }}</span>
+        </td>
+        <td>
+          <div class="d-flex gap-2">
+            <!-- View button - always available with ViewReports permission -->
+            <a [routerLink]="['/reports', report.id]" class="btn btn-sm btn-outline-info" title="View">
+              <i class="bi bi-eye"></i>
+            </a>
+            
+            <!-- Edit button - only visible with UpdateReport permission -->
+            <a *ngIf="canUpdateReport"
+               [routerLink]="['/reports', report.id, 'edit']" 
+               class="btn btn-sm btn-outline-primary" 
+               title="Edit">
+              <i class="bi bi-pencil"></i>
+            </a>
+            
+            <!-- Delete button - only visible with DeleteReport permission -->
+            <button *ngIf="canDeleteReport"
+                    class="btn btn-sm btn-outline-danger" 
+                    title="Delete"
+                    (click)="deleteReport(report.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,47 @@
+<nav aria-label="breadcrumb" class="p-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/home"><i class="bi bi-house-door"></i></a></li>
+    <li class="breadcrumb-item active">User Profile</li>
+  </ol>
+</nav>
+
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">User Profile</h5>
+        </div>
+        <div class="card-body" *ngIf="user">
+          <div class="d-flex align-items-center mb-4">
+            <div class="bg-light rounded-circle p-3 me-4">
+              <i class="bi bi-person-fill fs-1"></i>
+            </div>
+            <div>
+              <h3>{{ user.name }}</h3>
+              <span class="badge rounded-pill" [ngClass]="user.is_active ? 'bg-success' : 'bg-danger'">
+                {{ user.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <p><strong>Email:</strong> {{ user.email }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Role:</strong> {{ user.role_name }}</p>
+            </div>
+            
+            <div class="col-md-6" *ngIf="user.phone">
+              <p><strong>Phone:</strong> {{ user.phone }}</p>
+            </div>
+            <div class="col-md-6" *ngIf="user.date_of_birth">
+              <p><strong>Date of Birth:</strong> {{ user.date_of_birth | date }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
