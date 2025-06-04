@@ -2,26 +2,26 @@
   <div class="container-fluid">
     <a class="navbar-brand" (click)="navigateTo('/home')" style="cursor: pointer;">
       <i class="bi bi-shield-check me-2"></i>
-      <span class="text-primary">RBAC Management System</span>
+      <span class="text-primary">User Access Management System</span>
     </a>
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="'/home'" routerLinkActive="active" 
+          <a class="nav-link" [routerLink]="'/home'" routerLinkActive="active"
              [ngClass]="{'active': isSelected('/home')}">Home</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
              data-bs-toggle="dropdown" aria-expanded="false">
             About
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" [routerLink]="'/about/project'" 
+            <li><a class="dropdown-item" [routerLink]="'/about/project'"
                   [ngClass]="{'active': isSelected('/about/project')}">Project</a></li>
             <li><a class="dropdown-item" [routerLink]="'/about/developer'"
                   [ngClass]="{'active': isSelected('/about/developer')}">Developer</a></li>
@@ -32,7 +32,7 @@
 
         <!-- User Menu - Show when logged in -->
         <li class="nav-item dropdown" *ngIf="isLoggedIn">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
              role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle me-1 fs-5"></i>
             <span>{{ user?.name || 'User' }}</span>

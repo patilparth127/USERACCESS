@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 interface User {
@@ -21,7 +21,7 @@ interface User {
 })
 export class UserService {
   private readonly API_URL = environment.API_URL;
-  
+
   constructor(private readonly http: HttpClient) { }
 
   getUsers(): Observable<{ data: { users: any[] } }> {
@@ -31,7 +31,8 @@ export class UserService {
         data: {
           users: users.map(user => ({
             ...user,
-            _id: user.id // Ensure _id exists for compatibility with existing code
+            _id: user.id, // Ensure _id exists for compatibility with existing code
+            createdAt: user.created_at
           }))
         }
       })),
@@ -52,7 +53,7 @@ export class UserService {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
-    
+
     return this.http.post<any>(`${this.API_URL}/users`, userData).pipe(
       map(user => ({
         data: { user }
@@ -88,7 +89,7 @@ export class UserService {
   getUserById(userId: string): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/users/${userId}`).pipe(
       map(user => ({
-        data: { 
+        data: {
           user: {
             ...user,
             _id: user.id // Ensure _id exists for compatibility
@@ -105,8 +106,9 @@ export class UserService {
       ...data,
       updated_at: new Date().toISOString()
     };
-    
-    return this.http.patch<any>(`${this.API_URL}/users/${userId}`, updateData).pipe(
+
+    // Use PUT to replace the record fully
+    return this.http.put<any>(`${this.API_URL}/users/${userId}`, updateData).pipe(
       map(user => ({
         data: { user }
       })),
@@ -114,8 +116,10 @@ export class UserService {
     );
   }
 
-  deleteUser(userId: string): Observable<any> {
-    return this.http.delete<any>(`${this.API_URL}/users/${userId}`).pipe(
+  // Update deleteUser to call delete directly and return the userId
+  deleteUser(userId: string): Observable<{ data: { userId: string } }> {
+    return this.http.delete<void>(`${this.API_URL}/users/${userId}`).pipe(
+      map(() => ({ data: { userId } })),
       catchError(this.handleError)
     );
   }

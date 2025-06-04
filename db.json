@@ -1,164 +1,121 @@
 {
   "users": [
     {
-      "id": "1",
       "name": "Admin User",
       "email": "admin@example.com",
-      "password": "password123",
+      "phone": "8855447755",
+      "date_of_birth": "1997-07-12",
+      "password": "8855447755",
+      "confirm_password": "8855447755",
+      "is_active": true,
       "permissions": [
         {
-          "moduleName": "UsersManagement",
+          "moduleName": "UserManagement",
           "permissions": [
-            "Users.ViewUsers",
-            "Users.CreateUser",
-            "Users.UpdateUser",
-            "Users.DeleteUser"
+            "User.ViewUsers",
+            "User.CreateUser",
+            "User.UpdateUser",
+            "User.DeleteUser"
           ]
         },
         {
-          "moduleName": "RolesManagement",
+          "moduleName": "RoleManagement",
           "permissions": [
-            "Roles.ViewRoles",
-            "Roles.CreateRole",
-            "Roles.UpdateRole",
-            "Roles.DeleteRole"
+            "Role.ViewRoles",
+            "Role.CreateRole",
+            "Role.UpdateRole",
+            "Role.DeleteRole"
           ]
         },
         {
-          "moduleName": "FilesManagement",
+          "moduleName": "ReportManagement",
           "permissions": [
-            "Files.ViewFiles",
-            "Files.UploadFile",
-            "Files.DeleteFile"
+            "Report.ViewReports",
+            "Report.CreateReport",
+            "Report.UpdateReport",
+            "Report.DeleteReport",
+            "Report.ViewReportDetail"
           ]
         },
         {
-          "moduleName": "ReportsManagement",
+          "moduleName": "FileManagement",
           "permissions": [
-            "Reports.ViewReports",
-            "Reports.CreateReport",
-            "Reports.UpdateReport",
-            "Reports.DeleteReport",
-            "Reports.ViewReportDetail"
+            "File.ViewFiles",
+            "File.UploadFile",
+            "File.DeleteFile"
           ]
         },
         {
           "moduleName": "SettingsManagement",
           "permissions": [
-            "Settings.ViewSettings",
-            "Settings.ManageAdvancedSettings"
+            "Setting.ViewSettings",
+            "Setting.ManageAdvancedSettings"
           ]
         }
       ],
-      "is_active": true,
-      "created_at": "2023-01-01T00:00:00.000Z",
-      "updated_at": "2023-01-01T00:00:00.000Z"
+      "updated_at": "2025-06-04T18:28:34.043Z",
+      "id": "1"
     },
     {
-      "id": "2",
-      "name": "Manager User",
-      "email": "manager@example.com",
-      "password": "password123",
+      "name": "parth",
+      "email": "parth@example.com",
+      "phone": "998877445566",
+      "date_of_birth": "1997-07-12",
+      "password": "8855447755",
+      "confirm_password": "998877445566",
+      "is_active": true,
       "permissions": [
         {
-          "moduleName": "UsersManagement",
+          "moduleName": "UserManagement",
           "permissions": [
-            "Users.ViewUsers",
-            "Users.CreateUser",
-            "Users.UpdateUser"
+            "User.ViewUsers"
           ]
         },
         {
-          "moduleName": "FilesManagement",
+          "moduleName": "ReportManagement",
           "permissions": [
-            "Files.ViewFiles",
-            "Files.UploadFile"
+            "Report.ViewReports",
+            "Report.CreateReport",
+            "Report.UpdateReport",
+            "Report.DeleteReport",
+            "Report.ViewReportDetail"
           ]
         }
       ],
-      "is_active": true,
-      "created_at": "2023-01-02T00:00:00.000Z",
-      "updated_at": "2023-01-02T00:00:00.000Z"
+      "updated_at": "2025-06-04T18:34:16.944Z",
+      "id": "1749058525042"
     },
     {
-      "id": "3",
-      "name": "Standard User",
-      "email": "user@example.com",
-      "password": "password123",
-      "permissions": [
-        {
-          "moduleName": "FilesManagement",
-          "permissions": [
-            "Files.ViewFiles"
-          ]
-        }
-      ],
+      "name": "sonu@example.comdad",
+      "email": "sonu@example.comdad",
+      "phone": "9876543210",
+      "date_of_birth": "5858-08-08",
+      "password": "9876543210",
+      "confirm_password": "9876543210",
       "is_active": true,
-      "created_at": "2023-01-03T00:00:00.000Z",
-      "updated_at": "2023-01-03T00:00:00.000Z"
-    }
-  ],
-  "roles": [
-    {
-      "id": "1",
-      "name": "Administrator",
-      "description": "Full system access",
       "permissions": [
         {
-          "moduleName": "UsersManagement",
+          "moduleName": "ReportManagement",
           "permissions": [
-            "Users.ViewUsers",
-            "Users.CreateUser",
-            "Users.UpdateUser",
-            "Users.DeleteUser"
+            "Reports.ViewReports",
+            "Reports.CreateReport",
+            "Reports.ViewReportDetail",
+            "Report.ViewReports",
+            "Report.CreateReport",
+            "Report.DeleteReport"
           ]
         },
         {
-          "moduleName": "RolesManagement",
+          "moduleName": "FileManagement",
           "permissions": [
-            "Roles.ViewRoles",
-            "Roles.CreateRole",
-            "Roles.UpdateRole",
-            "Roles.DeleteRole"
-          ]
-        },
-        {
-          "moduleName": "FilesManagement",
-          "permissions": [
-            "Files.ViewFiles",
-            "Files.UploadFile",
-            "Files.DeleteFile"
+            "File.ViewFiles",
+            "File.UploadFile",
+            "File.DeleteFile"
           ]
         }
       ],
-      "is_active": true,
-      "created_at": "2023-01-01T00:00:00.000Z",
-      "updated_at": "2023-01-01T00:00:00.000Z"
-    },
-    {
-      "id": "2",
-      "name": "Manager",
-      "description": "Manage users and files",
-      "permissions": [
-        {
-          "moduleName": "UsersManagement",
-          "permissions": [
-            "Users.ViewUsers",
-            "Users.CreateUser",
-            "Users.UpdateUser"
-          ]
-        },
-        {
-          "moduleName": "FilesManagement",
-          "permissions": [
-            "Files.ViewFiles",
-            "Files.UploadFile"
-          ]
-        }
-      ],
-      "is_active": true,
-      "created_at": "2023-01-02T00:00:00.000Z",
-      "updated_at": "2023-01-02T00:00:00.000Z"
+      "updated_at": "2025-06-04T18:30:58.584Z",
+      "id": "1749059701727"
     }
   ]
 }

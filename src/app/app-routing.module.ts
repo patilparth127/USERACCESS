@@ -14,10 +14,10 @@ const routerOptions: ExtraOptions = {
 };
 
 const routes: Routes = [
-  { 
-    path: '', 
-    redirectTo: 'auth/login', 
-    pathMatch: 'full' 
+  {
+    path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
   },
   {
     path: 'home',
@@ -31,31 +31,20 @@ const routes: Routes = [
     path: 'users',
     loadChildren: () => import('./user/user.module').then(m => m.UserModule),
     canActivate: [AuthGuard],
-    data: { permission: 'Users.ViewUsers' }
+    data: { permission: 'User.ViewUsers' }
   },
-  {
-    path: 'roles',
-    loadChildren: () => import('./role/role.module').then(m => m.RoleModule),
-    canActivate: [AuthGuard],
-    data: { permission: 'Roles.ViewRoles' }
-  },
+
   {
     path: 'reports',
     loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule),
     canActivate: [PermissionGuard],
-    data: { permission: 'Reports.ViewReports' }
+    data: { permission: 'Report.ViewReports' }
   },
   {
     path: 'files',
     loadChildren: () => import('./files/files.module').then(m => m.FilesModule),
     canActivate: [PermissionGuard],
-    data: { permission: 'Files.ViewFiles' }
-  },
-  {
-    path: 'settings',
-    loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule),
-    canActivate: [PermissionGuard],
-    data: { permission: 'Settings.ViewSettings' }
+    data: { permission: 'File.ViewFiles' }
   },
   {
     path: 'forbidden',

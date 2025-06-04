@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   template: `
     <footer class="bg-light py-3 mt-auto">
       <div class="container text-center">
-        <p class="mb-0">&copy; {{currentYear}} RBAC Demo Application. All rights reserved.</p>
+        <p class="mb-0">&copy; {{currentYear}} User Access System. All rights reserved.</p>
       </div>
     </footer>
   `

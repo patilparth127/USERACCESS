@@ -28,52 +28,34 @@ export class UserAddComponent implements OnInit {
       name: 'UserManagement',
       displayName: 'User Management',
       permissions: [
-        { name: 'View Users', value: 'Users.ViewUsers' },
-        { name: 'Create User', value: 'Users.CreateUser' },
-        { name: 'Update User', value: 'Users.UpdateUser' },
-        { name: 'Delete User', value: 'Users.DeleteUser' }
-      ]
-    },
-    {
-      name: 'RoleManagement',
-      displayName: 'Role Management',
-      permissions: [
-        { name: 'View Roles', value: 'Roles.ViewRoles' },
-        { name: 'Create Role', value: 'Roles.CreateRole' },
-        { name: 'Update Role', value: 'Roles.UpdateRole' },
-        { name: 'Delete Role', value: 'Roles.DeleteRole' }
+        { name: 'View Users', value: 'User.ViewUsers' },
+        { name: 'Create User', value: 'User.CreateUser' },
+        { name: 'Update User', value: 'User.UpdateUser' },
+        { name: 'Delete User', value: 'User.DeleteUser' }
       ]
     },
     {
       name: 'ReportManagement',
       displayName: 'Report Management',
       permissions: [
-        { name: 'View Reports', value: 'Reports.ViewReports' },
-        { name: 'Create Report', value: 'Reports.CreateReport' },
-        { name: 'Update Report', value: 'Reports.UpdateReport' },
-        { name: 'Delete Report', value: 'Reports.DeleteReport' },
-        { name: 'View Report Detail', value: 'Reports.ViewReportDetail' }
+        { name: 'View Reports', value: 'Report.ViewReports' },
+        { name: 'Create Report', value: 'Report.CreateReport' },
+        { name: 'Update Report', value: 'Report.UpdateReport' },
+        { name: 'Delete Report', value: 'Report.DeleteReport' },
+        { name: 'View Report Detail', value: 'Report.ViewReportDetail' }
       ]
     },
     {
       name: 'FileManagement',
       displayName: 'File Management',
       permissions: [
-        { name: 'View Files', value: 'Files.ViewFiles' },
-        { name: 'Upload File', value: 'Files.UploadFile' },
-        { name: 'Delete File', value: 'Files.DeleteFile' }
+        { name: 'View Files', value: 'File.ViewFiles' },
+        { name: 'Upload File', value: 'File.UploadFile' },
+        { name: 'Delete File', value: 'File.DeleteFile' }
       ]
     },
-    {
-      name: 'SettingsManagement',
-      displayName: 'Settings Management',
-      permissions: [
-        { name: 'View Settings', value: 'Settings.ViewSettings' },
-        { name: 'Manage Advanced Settings', value: 'Settings.ManageAdvancedSettings' }
-      ]
-    }
   ];
-  
+
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
@@ -86,38 +68,46 @@ export class UserAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    
+
     if (this.userId) {
       this.operation = 'Edit';
       this.btnName = 'Update User';
       this.loadUserData();
     }
   }
-
   initializeForm(): void {
     this.userForm = this.fb.group({
       name: ['', [Validators.required]],
       email: [
-        { value: '', disabled: this.operation === 'Edit' }, 
+        { value: '', disabled: this.operation === 'Edit' },
         [Validators.required, Validators.email],
-      ], 
+      ],
       phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{10,15}$/)]],
       date_of_birth: ['', Validators.required],
-      modulePermissions: this.fb.array(this.permissionModules.map(module => 
+      password: [
+        '',
+        this.operation === 'Add' ? [Validators.required, Validators.minLength(6)] : []
+      ],
+      confirm_password: [
+        '',
+        this.operation === 'Add' ? [Validators.required, Validators.minLength(6)] : []
+      ],
+      modulePermissions: this.fb.array(this.permissionModules.map(module =>
         this.fb.group({
           moduleName: [module.name],
           permissions: [[]]
         })
       )),
       is_active: [true],
+
     });
   }
-  
+
   loadUserData(): void {
     this.userService.getUserById(this.userId).subscribe({
       next: (res: any) => {
         const userData = res.data.user;
-        
+
         // Patch basic user data
         this.userForm.patchValue({
           name: userData.name,
@@ -126,7 +116,7 @@ export class UserAddComponent implements OnInit {
           date_of_birth: userData.date_of_birth,
           is_active: userData.is_active
         });
-        
+
         // Handle permissions
         if (userData.permissions && Array.isArray(userData.permissions)) {
           this.patchPermissions(userData.permissions);
@@ -138,17 +128,17 @@ export class UserAddComponent implements OnInit {
       }
     });
   }
-  
+
   patchPermissions(permissionGroups: PermissionGroup[]): void {
     // Get the form array
     const modulePermissionsArray = this.userForm.get('modulePermissions') as FormArray;
-    
+
     // Update each module group with their permissions
     permissionGroups.forEach(permGroup => {
       // Find the matching form group
-      const formGroupIndex = this.permissionModules.findIndex(m => 
+      const formGroupIndex = this.permissionModules.findIndex(m =>
         m.name === permGroup.moduleName);
-      
+
       if (formGroupIndex !== -1 && modulePermissionsArray.at(formGroupIndex)) {
         // Set the permissions for this module
         modulePermissionsArray.at(formGroupIndex).get('permissions')?.setValue(
@@ -164,7 +154,7 @@ export class UserAddComponent implements OnInit {
     if (!modulePermissions || !modulePermissions.at(moduleIndex)) {
       return false;
     }
-    
+
     const permissions = modulePermissions.at(moduleIndex).get('permissions')?.value || [];
     return permissions.includes(permValue);
   }
@@ -182,7 +172,7 @@ export class UserAddComponent implements OnInit {
 
     // Format the permissions into the expected format for the API
     const formValue = {...this.userForm.getRawValue()};
-    
+
     // Convert modulePermissions array to expected API format
     const modulePermissions = formValue.modulePermissions || [];
     formValue.permissions = modulePermissions
@@ -191,7 +181,7 @@ export class UserAddComponent implements OnInit {
         moduleName: module.moduleName,
         permissions: module.permissions
       }));
-    
+
     // Remove the modulePermissions property before sending
     delete formValue.modulePermissions;
 
@@ -230,18 +220,18 @@ export class UserAddComponent implements OnInit {
   getTitle(): string {
     return this.operation === 'Add' ? 'Add User' : 'Update User';
   }
-  
+
   // Helper methods for permission handling
   selectAllModulePermissions(moduleIndex: number): void {
     const moduleFormGroup = (this.userForm.get('modulePermissions') as FormArray).at(moduleIndex);
     const module = this.permissionModules[moduleIndex];
-    
+
     const currentPermissions = [...moduleFormGroup.get('permissions')?.value || []];
     const modulePermissionValues = module.permissions.map((p: any) => p.value);
-    
+
     // Check if all permissions in this module are already selected
     const allSelected = modulePermissionValues.every((p: string) => currentPermissions.includes(p));
-    
+
     if (allSelected) {
       // If all are selected, deselect all
       moduleFormGroup.get('permissions')?.setValue([]);
@@ -250,33 +240,33 @@ export class UserAddComponent implements OnInit {
       moduleFormGroup.get('permissions')?.setValue([...modulePermissionValues]);
     }
   }
-  
+
   isModuleFullySelected(moduleIndex: number): boolean {
     const moduleFormGroup = (this.userForm.get('modulePermissions') as FormArray).at(moduleIndex);
     const module = this.permissionModules[moduleIndex];
-    
+
     const currentPermissions = moduleFormGroup.get('permissions')?.value || [];
     return module.permissions.every((p: any) => currentPermissions.includes(p.value));
   }
-  
+
   isModulePartiallySelected(moduleIndex: number): boolean {
     const moduleFormGroup = (this.userForm.get('modulePermissions') as FormArray).at(moduleIndex);
     const module = this.permissionModules[moduleIndex];
-    
+
     const currentPermissions = moduleFormGroup.get('permissions')?.value || [];
     const modulePermissionValues = module.permissions.map((p: any) => p.value);
-    
+
     const hasAny = modulePermissionValues.some((p: string) => currentPermissions.includes(p));
     const hasAll = modulePermissionValues.every((p: string) => currentPermissions.includes(p));
-    
+
     return hasAny && !hasAll;
   }
-  
+
   togglePermission(moduleIndex: number, permValue: string, event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     const moduleFormGroup = (this.userForm.get('modulePermissions') as FormArray).at(moduleIndex);
     const permissions = moduleFormGroup.get('permissions')?.value || [];
-    
+
     if (checkbox.checked) {
       // Add permission if not already present
       if (!permissions.includes(permValue)) {

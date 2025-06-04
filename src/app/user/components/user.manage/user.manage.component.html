@@ -37,15 +37,7 @@
         <td>{{ item.email }}</td>
         <td>{{ item.phone }}</td>
         <td>{{ item.date_of_birth | date }}</td>
-        <td>
-          <div *ngIf="item.permissions && item.permissions.length">
-            <span *ngFor="let perm of item.permissions.slice(0, 3)" class="badge bg-info me-1 mb-1">{{perm}}</span>
-            <span *ngIf="item.permissions.length > 3" class="badge bg-secondary">+{{ item.permissions.length - 3 }} more</span>
-          </div>
-          <div *ngIf="!item.permissions || !item.permissions.length">
-            No permissions assigned
-          </div>
-        </td>
+
         <td>
           <span
             class="badge rounded-pill"
@@ -66,7 +58,7 @@
             >
               <i class="bi bi-pencil"></i>
             </a>
-            
+
             <!-- Permissions button - requires UpdateUser permission -->
             <a
               *ngIf="canUpdateUser"
@@ -76,7 +68,7 @@
             >
               <i class="bi bi-shield"></i>
             </a>
-            
+
             <!-- Delete button - requires DeleteUser permission -->
             <button
               *ngIf="canDeleteUser"

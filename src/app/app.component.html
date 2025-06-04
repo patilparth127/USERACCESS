@@ -10,16 +10,17 @@
 
   <!-- Header -->
   <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">RBAC System</a>
-    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" 
-            (click)="toggleCollapsed($event)" aria-controls="sidebarMenu" 
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
+      User Access System</a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button"
+            (click)="toggleCollapsed($event)" aria-controls="sidebarMenu"
             aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <!-- Add search box or other header elements here -->
     <div class="w-100"></div>
-    
+
     <!-- Logout button -->
     <div class="navbar-nav" *ngIf="isAuthenticated">
       <div class="nav-item text-nowrap">
@@ -34,8 +35,8 @@
     <div class="row flex-nowrap">
       <!-- Sidebar Component -->
       <div class="col-auto p-0 sidebar-wrapper" *ngIf="isAuthenticated">
-        <app-sidebar 
-          [isCollapsed]="isCollapsed" 
+        <app-sidebar
+          [isCollapsed]="isCollapsed"
           [menuItems]="visibleMenuItems"
           (toggleSidebar)="toggleCollapsed($event)">
         </app-sidebar>
