@@ -15,25 +15,25 @@ const routes: Routes = [
     path: 'manage',
     component: UserManageComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Users.ViewUsers' }
+    data: { permission: 'User.ViewUsers' }
   },
   {
     path: 'add',
     component: UserAddComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Users.CreateUser' }
+    data: { permission: 'User.CreateUser' }
   },
   {
     path: 'edit/:userId',
     component: UserAddComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Users.UpdateUser' }
+    data: { permission: 'User.UpdateUser' }
   },
   {
     path: 'permissions/:userId',
     component: UserPermissionsComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Users.UpdateUser' }
+    data: { permission: 'User.UpdateUser' }
   }
 ];
 

@@ -31,16 +31,15 @@
         <td>{{ file.type }}</td>
         <td>{{ file.uploadedAt | date }}</td>
         <td>
-          <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-primary" title="Download">
+          <div class="d-flex gap-2">            <button class="btn btn-sm btn-outline-primary" title="Download"
+                    (click)="downloadFile(file)">
               <i class="bi bi-download"></i>
             </button>
-            
-            <!-- Delete button - only visible with DeleteFile permission -->
-            <button *ngIf="canDeleteFile"
-                    class="btn btn-sm btn-outline-danger" 
+              <!-- Delete button - only visible with DeleteFile permission -->
+            <button *ngIf="canDeleteFile && file.id"
+                    class="btn btn-sm btn-outline-danger"
                     title="Delete"
-                    (click)="deleteFile(file.id)">
+                    (click)="deleteFile(file.id!)">
               <i class="bi bi-trash"></i>
             </button>
           </div>

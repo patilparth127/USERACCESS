@@ -38,15 +38,15 @@ export class UserManageComponent implements OnInit {
     this.accessService.loadModulePermissions(['Users']).subscribe();
 
     // Check individual permissions
-    this.accessService.hasPermission('Users.CreateUser').subscribe(
+    this.accessService.hasPermission('User.CreateUser').subscribe(
       can => this.canCreateUser = can
     );
 
-    this.accessService.hasPermission('Users.UpdateUser').subscribe(
+    this.accessService.hasPermission('User.UpdateUser').subscribe(
       can => this.canUpdateUser = can
     );
 
-    this.accessService.hasPermission('Users.DeleteUser').subscribe(
+    this.accessService.hasPermission('User.DeleteUser').subscribe(
       can => this.canDeleteUser = can
     );
   }

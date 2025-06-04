@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FileService } from '../../services/file.service';
+import { FileRecord } from '../../models/file.model';
 
 @Component({
   selector: 'app-file-upload',
@@ -8,21 +10,21 @@ import { Router } from '@angular/router';
   template: `
     <div class="container">
       <h2>Upload File</h2>
-      <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
+      <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">        <div class="mb-3">
           <label for="file" class="form-label">Select File</label>
-          <input 
-            type="file" 
-            class="form-control" 
-            id="file" 
+          <input
+            type="file"
+            class="form-control"
+            id="file"
             (change)="onFileChange($event)"
             required>
+          <div class="form-text">Maximum file size: 50KB</div>
         </div>
         <div class="mb-3">
           <label for="description" class="form-label">Description</label>
-          <textarea 
-            class="form-control" 
-            id="description" 
+          <textarea
+            class="form-control"
+            id="description"
             formControlName="description"
             rows="3"></textarea>
         </div>
@@ -46,9 +48,10 @@ import { Router } from '@angular/router';
 export class FileUploadComponent {
   uploadForm: FormGroup;
   selectedFile: File | null = null;
-  
+
   constructor(
     private fb: FormBuilder,
+    private fileService: FileService,
     private router: Router
   ) {
     this.uploadForm = this.fb.group({
@@ -56,24 +59,42 @@ export class FileUploadComponent {
       category: ['', Validators.required]
     });
   }
-  
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
+      const file = event.target.files[0];
+      const maxSizeInBytes = 50 * 1024; // 50KB
+
+      if (file.size > maxSizeInBytes) {
+        alert('File size must be less than 50KB. Please select a smaller file.');
+        event.target.value = ''; // Clear the file input
+        this.selectedFile = null;
+        return;
+      }
+
+      this.selectedFile = file;
     }
   }
-  
+
   onSubmit() {
     if (this.uploadForm.valid && this.selectedFile) {
-      // Here you would normally upload the file to your backend
-      console.log('File to upload:', this.selectedFile);
-      console.log('Form data:', this.uploadForm.value);
-      
-      // Navigate back to file list after successful upload
-      this.router.navigate(['/files/list']);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const content = reader.result as string;
+        const record: FileRecord = {
+          name: this.selectedFile!.name,
+          size: this.selectedFile!.size,
+          type: this.selectedFile!.type,
+          uploadedAt: new Date().toISOString(),
+          description: this.uploadForm.value.description,
+          category: this.uploadForm.value.category,
+          content
+        };
+        this.fileService.create(record).subscribe(() => this.router.navigate(['/files/list']));
+      };
+      reader.readAsDataURL(this.selectedFile);
     }
   }
-  
+
   cancel() {
     this.router.navigate(['/files/list']);
   }

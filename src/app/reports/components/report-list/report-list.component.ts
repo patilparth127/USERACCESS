@@ -1,90 +1,74 @@
 import { Component, OnInit } from '@angular/core';
-import { AccessService } from '../../../core/services/access.service';
+import { ReportService } from '../../services/report.service';
+import { Report } from '../../models/report.model';
 
 @Component({
   selector: 'app-report-list',
-    standalone: false,
-  template: `
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Reports</h2>
-        <button 
-          class="btn btn-primary" 
-          routerLink="/reports/new"
-          *ngIf="canCreateReport">Create Report</button>
-      </div>
-      
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Created Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let report of reports">
-              <td>{{ report.name }}</td>
-              <td>{{ report.createdAt | date }}</td>
-              <td>
-                <span class="badge" [ngClass]="getStatusClass(report.status)">
-                  {{ report.status }}
-                </span>
-              </td>
-              <td>
-                <button 
-                  class="btn btn-sm btn-info me-2" 
-                  [routerLink]="['/reports', report.id]">View</button>
-                <button 
-                  class="btn btn-sm btn-primary me-2" 
-                  [routerLink]="['/reports', report.id, 'edit']"
-                  *ngIf="canUpdateReport">Edit</button>
-                <button 
-                  class="btn btn-sm btn-danger" 
-                  (click)="deleteReport(report.id)"
-                  *ngIf="canDeleteReport">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `
+  standalone: false,
+  templateUrl: './report-list.component.html'
 })
 export class ReportListComponent implements OnInit {
-  reports = [
-    { id: 1, name: 'Monthly Sales Report', createdAt: new Date(), status: 'Active' },
-    { id: 2, name: 'Customer Feedback Analysis', createdAt: new Date(), status: 'Draft' },
-    { id: 3, name: 'Inventory Status', createdAt: new Date(), status: 'Active' },
-    { id: 4, name: 'Employee Performance', createdAt: new Date(), status: 'Archived' }
-  ];
-  
+  reports: Report[] = [];
   canCreateReport = false;
   canUpdateReport = false;
   canDeleteReport = false;
-  
-  constructor(private accessService: AccessService) {}
-  
+  canViewReports = false;
+  canViewReportDetail = false;
+  loading = false;
+  errorMessage = '';
+
+  constructor(private reportService: ReportService) {}
+
   ngOnInit() {
-    // Load permissions for this module
-    this.accessService.loadModulePermissions(['Reports']).subscribe();
-    
-    // Check individual permissions
-    this.accessService.hasPermission('Reports.CreateReport').subscribe(
-      can => this.canCreateReport = can
-    );
-    
-    this.accessService.hasPermission('Reports.UpdateReport').subscribe(
-      can => this.canUpdateReport = can
-    );
-    
-    this.accessService.hasPermission('Reports.DeleteReport').subscribe(
-      can => this.canDeleteReport = can
-    );
+    this.checkPermissions();
+    this.loadReports();
   }
-  
+
+  checkPermissions() {
+    const userData = JSON.parse(localStorage.getItem('current_user') || '{}');
+    console.log('User Data:', userData);
+
+    const reportPermissions = userData.permissions?.find((p: any) => p.moduleName === 'ReportManagement')?.permissions || [];
+
+    this.canCreateReport = reportPermissions.includes('Report.CreateReport');
+    this.canUpdateReport = reportPermissions.includes('Report.UpdateReport');
+    this.canDeleteReport = reportPermissions.includes('Report.DeleteReport');
+    this.canViewReports = reportPermissions.includes('Report.ViewReports');
+    this.canViewReportDetail = reportPermissions.includes('Report.ViewReportDetail');
+
+    console.log('Report Permissions:', {
+      canCreate: this.canCreateReport,
+      canUpdate: this.canUpdateReport,
+      canDelete: this.canDeleteReport,
+      canView: this.canViewReports,
+      canViewDetail: this.canViewReportDetail,
+      allPermissions: reportPermissions
+    });
+  }
+
+  loadReports() {
+    if (!this.canViewReports && !this.canViewReportDetail) {
+      this.errorMessage = 'You do not have permission to view reports.';
+      return;
+    }
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.reportService.list().subscribe({
+      next: (reports) => {
+        this.reports = reports;
+        this.loading = false;
+        console.log('Loaded reports:', reports);
+      },
+      error: (error) => {
+        console.error('Error loading reports:', error);
+        this.errorMessage = 'Failed to load reports. Please try again.';
+        this.loading = false;
+      }
+    });
+  }
+
   getStatusClass(status: string) {
     switch (status) {
       case 'Active': return 'bg-success';
@@ -93,9 +77,21 @@ export class ReportListComponent implements OnInit {
       default: return 'bg-info';
     }
   }
-  
+
   deleteReport(id: number) {
-    // In a real app, call service to delete
-    this.reports = this.reports.filter(report => report.id !== id);
+    if (!this.canDeleteReport || !confirm('Are you sure you want to delete this report?')) {
+      return;
+    }
+
+    this.reportService.delete(id).subscribe({
+      next: () => {
+        this.reports = this.reports.filter(report => report.id !== id);
+        alert('Report deleted successfully!');
+      },
+      error: (error) => {
+        console.error('Error deleting report:', error);
+        alert('Error deleting report. Please try again.');
+      }
+    });
   }
 }

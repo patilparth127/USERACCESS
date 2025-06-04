@@ -15,25 +15,25 @@ const routes: Routes = [
     path: 'list',
     component: ReportListComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Reports.ViewReports' }
+    data: { permission: 'Report.ViewReports' }
   },
   {
     path: 'new',
     component: ReportCreateComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Reports.CreateReport' }
+    data: { permission: 'Report.CreateReport' }
   },
   {
     path: ':id',
     component: ReportDetailComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Reports.ViewReportDetail' }
+    data: { permission: 'Report.ViewReportDetail' }
   },
   {
     path: ':id/edit',
     component: ReportCreateComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Reports.UpdateReport' }
+    data: { permission: 'Report.UpdateReport' }
   }
 ];
 

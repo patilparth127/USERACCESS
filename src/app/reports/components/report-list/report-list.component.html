@@ -14,53 +14,103 @@
 </div>
 
 <div class="p-4">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Report Name</th>
-        <th>Created Date</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let report of reports">
-        <td>{{ report.id }}</td>
-        <td>{{ report.name }}</td>
-        <td>{{ report.createdAt | date }}</td>
-        <td>
-          <span class="badge" [ngClass]="{
-            'bg-success': report.status === 'Active',
-            'bg-warning': report.status === 'Draft',
-            'bg-secondary': report.status === 'Archived'
-          }">{{ report.status }}</span>
-        </td>
-        <td>
-          <div class="d-flex gap-2">
-            <!-- View button - always available with ViewReports permission -->
-            <a [routerLink]="['/reports', report.id]" class="btn btn-sm btn-outline-info" title="View">
-              <i class="bi bi-eye"></i>
-            </a>
-            
-            <!-- Edit button - only visible with UpdateReport permission -->
-            <a *ngIf="canUpdateReport"
-               [routerLink]="['/reports', report.id, 'edit']" 
-               class="btn btn-sm btn-outline-primary" 
-               title="Edit">
-              <i class="bi bi-pencil"></i>
-            </a>
-            
-            <!-- Delete button - only visible with DeleteReport permission -->
-            <button *ngIf="canDeleteReport"
-                    class="btn btn-sm btn-outline-danger" 
-                    title="Delete"
-                    (click)="deleteReport(report.id)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Error message display -->
+  <div *ngIf="errorMessage" class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Reports table -->
+  <div *ngIf="!loading && !errorMessage" class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Image</th>
+          <th>Report Name</th>
+          <th>Type</th>
+          <th>Created Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of reports">
+          <td>{{ report.id }}</td>
+          <td>
+            <img *ngIf="report.image"
+                 [src]="report.image"
+                 alt="Report Image"
+                 class="img-thumbnail"
+                 style="width: 50px; height: 50px; object-fit: cover;">
+            <span *ngIf="!report.image" class="text-muted">No Image</span>
+          </td>
+          <td>{{ report.name }}</td>
+          <td>
+            <span class="badge bg-info">{{ report.type }}</span>
+          </td>
+          <td>{{ report.createdAt | date:'short' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusClass(report.status)">
+              {{ report.status }}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex gap-2">
+              <!-- View button - visible with ViewReports or ViewReportDetail permission -->
+              <a *ngIf="canViewReports || canViewReportDetail"
+                 [routerLink]="['/reports', report.id]"
+                 class="btn btn-sm btn-outline-info"
+                 title="View Report Details">
+                <i class="bi bi-eye"></i>
+              </a>
+
+              <!-- Edit button - only visible with UpdateReport permission -->
+              <a *ngIf="canUpdateReport"
+                 [routerLink]="['/reports', report.id, 'edit']"
+                 class="btn btn-sm btn-outline-primary"
+                 title="Edit Report">
+                <i class="bi bi-pencil"></i>
+              </a>
+
+              <!-- Delete button - only visible with DeleteReport permission -->
+              <button *ngIf="canDeleteReport"
+                      class="btn btn-sm btn-outline-danger"
+                      title="Delete Report"
+                      (click)="deleteReport(report.id!)">
+                <i class="bi bi-trash"></i>
+              </button>
+
+              <!-- No actions message if user has no permissions -->
+              <span *ngIf="!canViewReports && !canViewReportDetail && !canUpdateReport && !canDeleteReport"
+                    class="text-muted small">
+                No actions available
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty state -->
+    <div *ngIf="reports.length === 0" class="text-center py-4">
+      <i class="bi bi-file-earmark-text display-1 text-muted"></i>
+      <h5 class="mt-3 text-muted">No reports found</h5>
+      <p class="text-muted">
+        <span *ngIf="canCreateReport">
+          Create your first report to get started.
+        </span>
+        <span *ngIf="!canCreateReport">
+          No reports are available at the moment.
+        </span>
+      </p>
+    </div>
+  </div>
 </div>

@@ -63,7 +63,7 @@ export class AppComponent implements OnInit {
       link: '/files',
       permission: 'File.ViewFiles',
       child: [
-        { label: 'Browse Files', link: '/files/list', iconName: 'list', permission: 'File.ViewFiles' },
+        // { label: 'Browse Files', link: '/files/list', iconName: 'list', permission: 'File.ViewFiles' },
         { label: 'Upload File', link: '/files/upload', iconName: 'upload', permission: 'File.UploadFile' }
       ]
     }
@@ -97,21 +97,19 @@ export class AppComponent implements OnInit {
 
   toggleCollapsed(event: any): void {
     this.isCollapsed = !this.isCollapsed;
-  }
-
-  updateMenuVisibility(): void {
+  }  updateMenuVisibility(): void {
     console.log('Updating menu visibility');
 
     // Filter menu items based on permissions
-    this.visibleMenuItems = this.SIDENAV_ITEMS.filter(item => {
+    this.visibleMenuItems = this.SIDENAV_ITEMS.map(item => {
       // Home is always visible
       if (item.link === '/home') {
-        return true;
+        return { ...item, child: [...item.child] };
       }
 
       // For others, check based on module path
       const modulePath = item.link.split('/')[1]; // Get the first part of the path
-      if (!modulePath) return false;
+      if (!modulePath) return null;
 
       // Map path to permission module name
       const moduleMap: Record<string, string> = {
@@ -120,19 +118,30 @@ export class AppComponent implements OnInit {
         files: 'FileManagement'
       };
       const moduleName = moduleMap[modulePath] || modulePath.charAt(0).toUpperCase() + modulePath.slice(1);
-      console.log(`Checking access for menu item: ${item.label}, module: ${moduleName}`);
+      console.log(`Checking access for menu item: ${item.label}, module: ${moduleName}`);      // Check if user has access to this module
+      const hasModuleAccess = this.authService.hasModuleAccess(moduleName);
+      console.log(`Module access for ${moduleName}: ${hasModuleAccess}`);
 
-      // Check if user has access to this module
-      const hasAccess = this.authService.hasModuleAccess(moduleName);
-      console.log(`Access for ${moduleName}: ${hasAccess}`);
+      if (!hasModuleAccess) {
+        return null;
+      }
 
-      // If the user has access to the module, also filter its child items
-      if (hasAccess && item.child && item.child.length > 0) {
-        // Create a copy of child items to avoid modifying the original
-        const originalChildren = [...item.child];
+      // Also check specific permission for the parent item if it has one
+      let hasParentPermission = true;
+      if (item.permission) {
+        hasParentPermission = this.authService.hasPermission(item.permission);
+        console.log(`Parent item ${item.label} permission ${item.permission}: ${hasParentPermission}`);
+      }
 
-        // Filter child items based on specific permissions
-        item.child = originalChildren.filter(child => {
+      // Create a copy of the item to avoid modifying the original
+      const itemCopy: SidenavItem = {
+        ...item,
+        child: []
+      };
+
+      // Filter child items based on specific permissions
+      if (item.child && item.child.length > 0) {
+        itemCopy.child = item.child.filter(child => {
           // If no specific permission is required, show the child item
           if (!child.permission) return true;
 
@@ -143,11 +152,16 @@ export class AppComponent implements OnInit {
         });
       }
 
-      // Show the parent item if it has access and (no children or at least one visible child)
-      const shouldShow = hasAccess && (!item.child.length || item.child.length > 0);
-      console.log(`Should show ${item.label}: ${shouldShow}`);
-      return shouldShow;
-    });
+      // Show the parent item if:
+      // 1. User has module access AND
+      // 2. User has parent permission (if required) AND
+      // 3. Either has no children OR has at least one visible child
+      const shouldShow = hasModuleAccess && hasParentPermission &&
+                        (item.child.length === 0 || itemCopy.child.length > 0);
+      console.log(`Should show ${item.label}: ${shouldShow}, module access: ${hasModuleAccess}, parent permission: ${hasParentPermission}, visible children: ${itemCopy.child.length}`);
+
+      return shouldShow ? itemCopy : null;
+    }).filter((item): item is SidenavItem => item !== null);
 
     // Update selected state
     this.updateSelectedState();

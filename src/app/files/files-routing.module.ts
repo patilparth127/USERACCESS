@@ -7,20 +7,21 @@ import { PermissionGuard } from '../core/guards/permission.guard';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'list',
-    pathMatch: 'full'
+    component: FileListComponent,
+    canActivate: [PermissionGuard],
+    data: { permission: 'File.ViewFiles' }
   },
   {
     path: 'list',
     component: FileListComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Files.ViewFiles' }
+    data: { permission: 'File.ViewFiles' }
   },
   {
     path: 'upload',
     component: FileUploadComponent,
     canActivate: [PermissionGuard],
-    data: { permission: 'Files.UploadFile' }
+    data: { permission: 'File.UploadFile' }
   }
 ];
 
