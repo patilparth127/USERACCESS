@@ -7,7 +7,6 @@ import { FooterComponent } from './components/footer/footer.component';
 import { PageNotFoundComponent } from './components/page.not.found/page.not.found.component';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { PermissionDirective } from './directives/permission.directive';
-import { NzMessageModule } from 'ng-zorro-antd/message';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
@@ -24,7 +23,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     CommonModule,
     CoreRoutingModule,
     RouterModule,
-    NzMessageModule
   ],
 
   exports: [

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, ExtraOptions } from '@angular/router';
-import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './core/components/page.not.found/page.not.found.component';
 import { ForbiddenComponent } from './core/components/forbidden/forbidden.component';
 import { PermissionGuard } from './core/guards/permission.guard';

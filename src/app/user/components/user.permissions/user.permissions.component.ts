@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 interface PermissionGroup {
   moduleName: string;
@@ -59,7 +58,6 @@ export class UserPermissionsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private message: NzMessageService
   ) { }
 
   ngOnInit(): void {
@@ -94,7 +92,6 @@ export class UserPermissionsComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.message.error('Failed to load user data');
         this.router.navigate(['/users/manage']);
         this.loading = false;
       }
@@ -142,12 +139,10 @@ export class UserPermissionsComponent implements OnInit {
     this.loading = true;
     this.userService.updateUserPermissions(this.userId, permissions).subscribe({
       next: () => {
-        this.message.success('User permissions updated successfully');
         this.router.navigate(['/users/manage']);
         this.loading = false;
       },
       error: (error) => {
-        this.message.error('Failed to update user permissions');
         this.loading = false;
       }
     });

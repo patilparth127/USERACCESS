@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { AccessService } from '../../../core/services/access.service';
 
 @Component({
@@ -28,7 +27,6 @@ export class UserManageComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private message: NzMessageService,
     private accessService: AccessService
   ) { }
   ngOnInit(): void {
@@ -71,10 +69,8 @@ export class UserManageComponent implements OnInit {
   confirmDelete(item: any): void {
     this.userService.deleteUser(item._id).subscribe({
       next: (res: any) => {
-        this.message.success(`User with ID ${res.data.userId} deleted successfully`);
         this.getList();
       },
-      error: (err: any) => this.message.error('Failed to delete user: ' + err.message),
     });
   }
 }

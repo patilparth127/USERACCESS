@@ -5,12 +5,10 @@ import { RouterModule } from '@angular/router';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { RegisterComponent } from './components/register/register.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
-    RegisterComponent,
     ProfileComponent
   ],
   imports: [

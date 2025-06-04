@@ -61,9 +61,7 @@ export class AppComponent implements OnInit {
       label: 'Files',
       iconName: 'folder',
       link: '/files',
-      permission: 'File.ViewFiles',
-      child: [
-        // { label: 'Browse Files', link: '/files/list', iconName: 'list', permission: 'File.ViewFiles' },
+      permission: 'File.ViewFiles',      child: [
         { label: 'Upload File', link: '/files/upload', iconName: 'upload', permission: 'File.UploadFile' }
       ]
     }
@@ -75,19 +73,15 @@ export class AppComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {}
-
   ngOnInit(): void {
-    // Check authentication status
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
 
-      // Only initialize sidebar if authenticated
       if (this.isAuthenticated) {
         this.updateMenuVisibility();
       }
     });
 
-    // Update selected state on route change
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -98,75 +92,51 @@ export class AppComponent implements OnInit {
   toggleCollapsed(event: any): void {
     this.isCollapsed = !this.isCollapsed;
   }  updateMenuVisibility(): void {
-    console.log('Updating menu visibility');
-
-    // Filter menu items based on permissions
     this.visibleMenuItems = this.SIDENAV_ITEMS.map(item => {
-      // Home is always visible
       if (item.link === '/home') {
         return { ...item, child: [...item.child] };
       }
 
-      // For others, check based on module path
-      const modulePath = item.link.split('/')[1]; // Get the first part of the path
+      const modulePath = item.link.split('/')[1];
       if (!modulePath) return null;
 
-      // Map path to permission module name
       const moduleMap: Record<string, string> = {
         users: 'UserManagement',
         reports: 'ReportManagement',
         files: 'FileManagement'
       };
       const moduleName = moduleMap[modulePath] || modulePath.charAt(0).toUpperCase() + modulePath.slice(1);
-      console.log(`Checking access for menu item: ${item.label}, module: ${moduleName}`);      // Check if user has access to this module
+
       const hasModuleAccess = this.authService.hasModuleAccess(moduleName);
-      console.log(`Module access for ${moduleName}: ${hasModuleAccess}`);
 
       if (!hasModuleAccess) {
         return null;
       }
 
-      // Also check specific permission for the parent item if it has one
       let hasParentPermission = true;
       if (item.permission) {
         hasParentPermission = this.authService.hasPermission(item.permission);
-        console.log(`Parent item ${item.label} permission ${item.permission}: ${hasParentPermission}`);
       }
 
-      // Create a copy of the item to avoid modifying the original
       const itemCopy: SidenavItem = {
         ...item,
         child: []
       };
 
-      // Filter child items based on specific permissions
       if (item.child && item.child.length > 0) {
         itemCopy.child = item.child.filter(child => {
-          // If no specific permission is required, show the child item
           if (!child.permission) return true;
-
-          // Otherwise check the specific permission
-          const hasPermission = this.authService.hasPermission(child.permission);
-          console.log(`Child item ${child.label} permission ${child.permission}: ${hasPermission}`);
-          return hasPermission;
+          return this.authService.hasPermission(child.permission);
         });
       }
 
-      // Show the parent item if:
-      // 1. User has module access AND
-      // 2. User has parent permission (if required) AND
-      // 3. Either has no children OR has at least one visible child
       const shouldShow = hasModuleAccess && hasParentPermission &&
                         (item.child.length === 0 || itemCopy.child.length > 0);
-      console.log(`Should show ${item.label}: ${shouldShow}, module access: ${hasModuleAccess}, parent permission: ${hasParentPermission}, visible children: ${itemCopy.child.length}`);
 
       return shouldShow ? itemCopy : null;
     }).filter((item): item is SidenavItem => item !== null);
 
-    // Update selected state
     this.updateSelectedState();
-
-    console.log('Visible menu items:', this.visibleMenuItems);
   }
 
   updateSelectedState(): void {
