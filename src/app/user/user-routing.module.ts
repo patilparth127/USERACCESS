@@ -3,7 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserManageComponent } from './components/user.manage/user.manage.component';
 import { UserAddComponent } from './components/user.add/user.add.component';
 import { UserPermissionsComponent } from './components/user.permissions/user.permissions.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { PermissionGuard } from '../core/guards/permission.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -34,6 +36,12 @@ const routes: Routes = [
     component: UserPermissionsComponent,
     canActivate: [PermissionGuard],
     data: { permission: 'User.UpdateUser' }
+  },
+  {
+    path: 'profile/:userId',
+    component: UserProfileComponent,
+    canActivate: [AuthGuard],
+    data: { requiredPermission: 'User.ViewUsers' }
   }
 ];
 

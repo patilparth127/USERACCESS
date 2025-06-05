@@ -14,7 +14,7 @@
   "users": [
     {
       "name": "Admin User",
-      "email": "admin@example.com",
+      "email": "admin@gmail.com",
       "phone": "8855447755",
       "date_of_birth": "1997-07-12",
       "password": "8855447755",
@@ -70,7 +70,7 @@
     },
     {
       "name": "parth",
-      "email": "parth@example.com",
+      "email": "parth@gmail.com",
       "phone": "998877445566",
       "date_of_birth": "1997-07-12",
       "password": "8855447755",
@@ -98,8 +98,8 @@
       "id": "1749058525042"
     },
     {
-      "name": "sonu@example.comdad",
-      "email": "sonu@example.comdad",
+      "name": "sonu@gmail.comdad",
+      "email": "sonu@gmail.comdad",
       "phone": "9876543210",
       "date_of_birth": "5858-08-08",
       "password": "9876543210",

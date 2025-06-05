@@ -12,60 +12,116 @@
       <h4>{{ getTitle() }}</h4>
     </div>
     <div class="card-body">
-      <form [formGroup]="userForm" >
+      <form [formGroup]="userForm">
+        <h5 class="mb-3 border-bottom pb-2">Personal Information</h5>
+
         <div class="row mb-4">
-          <label class="col-md-4 col-form-label">
-            Name<span class="text-danger">*</span>
-          </label>
-          <div class="col-md-8">
+          <div class="col-md-4">
+            <label class="form-label">First Name<span class="text-danger">*</span></label>
             <input
               type="text"
-              formControlName="name"
-              placeholder="Enter user name"
+              formControlName="firstName"
+              placeholder="Enter first name"
               class="form-control"
-              [ngClass]="{'is-invalid': userForm.get('name')?.invalid && userForm.get('name')?.touched}"
+              [ngClass]="{'is-invalid': userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched}"
             />
-            <div class="invalid-feedback">Name is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('firstName')?.errors?.['required']">First name is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Middle Name</label>
+            <input
+              type="text"
+              formControlName="middleName"
+              placeholder="Enter middle name"
+              class="form-control"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Last Name<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              formControlName="lastName"
+              placeholder="Enter last name"
+              class="form-control"
+              [ngClass]="{'is-invalid': userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched}"
+            />
+            <div class="invalid-feedback" *ngIf="userForm.get('lastName')?.errors?.['required']">Last name is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters</div>
           </div>
         </div>
 
         <div class="row mb-4">
-          <label class="col-md-4 col-form-label">
-            Email<span class="text-danger">*</span>
-          </label>
-          <div class="col-md-8">
+          <div class="col-md-6">
+            <label class="form-label">Display Name<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              formControlName="displayName"
+              placeholder="Enter display name"
+              class="form-control"
+              [ngClass]="{'is-invalid': userForm.get('displayName')?.invalid && userForm.get('displayName')?.touched}"
+            />
+            <small class="text-muted">Auto-generated from first and last name</small>
+            <div class="invalid-feedback" *ngIf="userForm.get('displayName')?.errors?.['required']">Display name is required</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Gender<span class="text-danger">*</span></label>
+            <select
+              formControlName="gender"
+              class="form-select"
+              [ngClass]="{'is-invalid': userForm.get('gender')?.invalid && userForm.get('gender')?.touched}"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="userForm.get('gender')?.errors?.['required']">Gender is required</div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label class="form-label">Email<span class="text-danger">*</span></label>
             <input
               type="email"
               formControlName="email"
               placeholder="Enter email address"
               class="form-control"
-              [ngClass]="{'is-invalid': userForm.get('email')?.invalid && userForm.get('email')?.touched}"
+              [ngClass]="{'is-invalid': (userForm.get('email')?.invalid && userForm.get('email')?.touched) || errorMessages.email}"
             />
-            <div class="invalid-feedback">Valid email is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['required']">Email is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['email']">Enter a valid email address</div>
+            <div class="invalid-feedback" *ngIf="errorMessages.email">{{ errorMessages.email }}</div>
+            <div *ngIf="validating.email" class="text-info small">
+              <i class="bi bi-hourglass-split"></i> Checking email availability...
+            </div>
           </div>
-        </div>
 
-        <div class="row mb-4">
-          <label class="col-md-4 col-form-label">
-            Phone<span class="text-danger">*</span>
-          </label>
-          <div class="col-md-8">
+          <div class="col-md-6">
+            <label class="form-label">Phone<span class="text-danger">*</span></label>
             <input
               type="tel"
               formControlName="phone"
               placeholder="Enter phone number"
               class="form-control"
-              [ngClass]="{'is-invalid': userForm.get('phone')?.invalid && userForm.get('phone')?.touched}"
+              [ngClass]="{'is-invalid': (userForm.get('phone')?.invalid && userForm.get('phone')?.touched) || errorMessages.phone}"
             />
-            <div class="invalid-feedback">Valid phone number is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('phone')?.errors?.['required']">Phone is required</div>
+            <div class="invalid-feedback" *ngIf="userForm.get('phone')?.errors?.['pattern']">Enter a valid phone number</div>
+            <div class="invalid-feedback" *ngIf="errorMessages.phone">{{ errorMessages.phone }}</div>
+            <div *ngIf="validating.phone" class="text-info small">
+              <i class="bi bi-hourglass-split"></i> Checking phone availability...
+            </div>
           </div>
         </div>
 
         <div class="row mb-4">
-          <label class="col-md-4 col-form-label">
-            Date of Birth<span class="text-danger">*</span>
-          </label>
-          <div class="col-md-8">
+          <div class="col-md-6">
+            <label class="form-label">Date of Birth<span class="text-danger">*</span></label>
             <input
               type="date"
               formControlName="date_of_birth"
@@ -75,49 +131,149 @@
             <div class="invalid-feedback">Date of birth is required</div>
           </div>
         </div>
-<div class="row mb-4">
-        <div class="col-md-6">
-          <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            formControlName="password"
-          />
-          <div *ngIf="userForm.get('password')?.dirty && userForm.get('password')?.errors">
-            <small class="text-danger" *ngIf="userForm.get('password')?.errors?.['required']">
-              Password is required
-            </small>
-            <small class="text-danger" *ngIf="userForm.get('password')?.errors?.['minlength']">
-              Password must be at least 6 characters
-            </small>
+
+        <h5 class="mb-3 mt-4 border-bottom pb-2">Address Information</h5>
+
+        <div formGroupName="address">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="form-label">Street<span class="text-danger">*</span></label>
+              <input
+                type="text"
+                formControlName="street"
+                class="form-control"
+                placeholder="Enter street address"
+                [ngClass]="{'is-invalid': userForm.get('address.street')?.invalid && userForm.get('address.street')?.touched}"
+              />
+              <div class="invalid-feedback">Street address is required</div>
+            </div>
           </div>
-          <small *ngIf="operation === 'Edit'" class="text-muted">
-            Leave blank to keep existing password
-          </small>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">City<span class="text-danger">*</span></label>
+              <input
+                type="text"
+                formControlName="city"
+                class="form-control"
+                placeholder="Enter city"
+                [ngClass]="{'is-invalid': userForm.get('address.city')?.invalid && userForm.get('address.city')?.touched}"
+              />
+              <div class="invalid-feedback">City is required</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">State/Province<span class="text-danger">*</span></label>
+              <input
+                type="text"
+                formControlName="state"
+                class="form-control"
+                placeholder="Enter state/province"
+                [ngClass]="{'is-invalid': userForm.get('address.state')?.invalid && userForm.get('address.state')?.touched}"
+              />
+              <div class="invalid-feedback">State is required</div>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label">ZIP/Postal Code<span class="text-danger">*</span></label>
+              <input
+                type="text"
+                formControlName="zipCode"
+                class="form-control"
+                placeholder="Enter ZIP/postal code"
+                [ngClass]="{'is-invalid': userForm.get('address.zipCode')?.invalid && userForm.get('address.zipCode')?.touched}"
+              />
+              <div class="invalid-feedback" *ngIf="userForm.get('address.zipCode')?.errors?.['required']">ZIP code is required</div>
+              <div class="invalid-feedback" *ngIf="userForm.get('address.zipCode')?.errors?.['pattern']">Enter a valid ZIP code</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Country<span class="text-danger">*</span></label>
+              <input
+                type="text"
+                formControlName="country"
+                class="form-control"
+                placeholder="Enter country"
+                [ngClass]="{'is-invalid': userForm.get('address.country')?.invalid && userForm.get('address.country')?.touched}"
+              />
+              <div class="invalid-feedback">Country is required</div>
+            </div>
+          </div>
         </div>
 
-        <div class="col-md-6">
-          <label for="confirm_password" class="form-label">Confirm Password</label>
-          <input
-            type="password"
-            class="form-control"
-            id="confirm_password"
-            formControlName="confirm_password"
-          />
-          <div *ngIf="userForm.get('confirm_password')?.dirty && userForm.get('confirm_password')?.errors">
-            <small class="text-danger" *ngIf="userForm.get('confirm_password')?.errors?.['required']">
-              Confirm password is required
-            </small>
-            <small class="text-danger" *ngIf="userForm.get('confirm_password')?.errors?.['minlength']">
-              Password must be at least 6 characters
-            </small>
+        <h5 class="mb-3 mt-4 border-bottom pb-2">Employment Information</h5>
+
+        <div class="row mb-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Department</label>
+            <input
+              type="text"
+              formControlName="department"
+              class="form-control"
+              placeholder="Enter department"
+            />
           </div>
         </div>
-</div>
+
         <div class="row mb-4">
-          <label class="col-md-4 col-form-label">
-            Permissions
+          <div class="col-md-6">
+            <label class="form-label">Position</label>
+            <input
+              type="text"
+              formControlName="position"
+              class="form-control"
+              placeholder="Enter position/title"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Joining Date</label>
+            <input
+              type="date"
+              formControlName="joiningDate"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <h5 class="mb-3 mt-4 border-bottom pb-2">Authentication</h5>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label class="form-label">Password<span *ngIf="operation === 'Add'" class="text-danger">*</span></label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              [ngClass]="{'is-invalid': userForm.get('password')?.dirty && userForm.get('password')?.errors}"
+            />
+            <div *ngIf="userForm.get('password')?.dirty && userForm.get('password')?.errors">
+              <small class="text-danger" *ngIf="userForm.get('password')?.errors?.['required']">Password is required</small>
+              <small class="text-danger" *ngIf="userForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</small>
+            </div>
+            <small *ngIf="operation === 'Edit'" class="text-muted">Leave blank to keep existing password</small>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Confirm Password<span *ngIf="operation === 'Add'" class="text-danger">*</span></label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="confirm_password"
+              [ngClass]="{'is-invalid': userForm.get('confirm_password')?.dirty && userForm.get('confirm_password')?.errors}"
+            />
+            <div *ngIf="userForm.get('confirm_password')?.dirty && userForm.get('confirm_password')?.errors">
+              <small class="text-danger" *ngIf="userForm.get('confirm_password')?.errors?.['required']">Confirm password is required</small>
+              <small class="text-danger" *ngIf="userForm.get('confirm_password')?.errors?.['minlength']">Password must be at least 6 characters</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <label class="col-md-4 col-form-label">Permissions
           </label>
           <div class="col-md-8">
             <div class="table-responsive">
@@ -174,8 +330,7 @@
         </div>
 
         <div class="row mb-4">
-          <label class="col-md-4 col-form-label">
-            Status
+          <label class="col-md-4 col-form-label">Status
           </label>
           <div class="col-md-8">
             <div class="form-check form-switch">

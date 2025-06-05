@@ -4,6 +4,8 @@ import { UserService } from '../../services/user.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, switchMap, finalize, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 interface PermissionGroup {
   moduleName: string;
@@ -21,7 +23,18 @@ export class UserAddComponent implements OnInit {
   operation = 'Add';
   btnName = 'Add User';
   userForm!: FormGroup;
-
+  validating = {
+    email: false,
+    phone: false,
+    name: false,
+    employeeId: false
+  };
+  errorMessages = {
+    email: '',
+    phone: '',
+    name: '',
+    employeeId: ''
+  };
 
   permissionModules: any[] = [
     {
@@ -73,17 +86,41 @@ export class UserAddComponent implements OnInit {
       this.operation = 'Edit';
       this.btnName = 'Update User';
       this.loadUserData();
+    } else {
+      this.setupValidationListeners();
     }
   }
   initializeForm(): void {
     this.userForm = this.fb.group({
-      name: ['', [Validators.required]],
+      // Personal Information
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      middleName: [''],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      displayName: ['', [Validators.required]], // Combined name for display
       email: [
         { value: '', disabled: this.operation === 'Edit' },
         [Validators.required, Validators.email],
       ],
       phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{10,15}$/)]],
       date_of_birth: ['', Validators.required],
+      gender: ['', Validators.required],
+
+      // Address Information
+      address: this.fb.group({
+        street: ['', Validators.required],
+        city: ['', Validators.required],
+        state: ['', Validators.required],
+        zipCode: ['', [Validators.required, Validators.pattern(/^[0-9]{5,6}$/)]],
+        country: ['', Validators.required]
+      }),
+
+      // Employment Information
+      employeeId: [''],
+      department: [''],
+      position: [''],
+      joiningDate: [''],
+
+      // Authentication
       password: [
         '',
         this.operation === 'Add' ? [Validators.required, Validators.minLength(6)] : []
@@ -92,6 +129,8 @@ export class UserAddComponent implements OnInit {
         '',
         this.operation === 'Add' ? [Validators.required, Validators.minLength(6)] : []
       ],
+
+      // Permissions & Status
       modulePermissions: this.fb.array(this.permissionModules.map(module =>
         this.fb.group({
           moduleName: [module.name],
@@ -99,7 +138,127 @@ export class UserAddComponent implements OnInit {
         })
       )),
       is_active: [true],
+    });
 
+    // Auto-populate display name when first or last name changes
+    this.userForm.get('firstName')?.valueChanges.subscribe(() => this.updateDisplayName());
+    this.userForm.get('lastName')?.valueChanges.subscribe(() => this.updateDisplayName());
+  }
+
+  updateDisplayName(): void {
+    const firstName = this.userForm.get('firstName')?.value || '';
+    const lastName = this.userForm.get('lastName')?.value || '';
+    const displayName = `${firstName} ${lastName}`.trim();
+    this.userForm.get('displayName')?.setValue(displayName);
+  }
+
+  setupValidationListeners(): void {
+    // Email validation
+    this.userForm.get('email')?.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(email => {
+        if (!email || email === '') return of(null);
+
+        this.validating.email = true;
+        this.errorMessages.email = '';
+
+        return this.userService.checkEmailExists(email).pipe(
+          finalize(() => {
+            this.validating.email = false;
+          }),
+          catchError(() => {
+            this.errorMessages.email = 'Error checking email availability';
+            return of({ exists: false });
+          })
+        );
+      })
+    ).subscribe(response => {
+      if (response && response.exists) {
+        this.errorMessages.email = 'This email is already in use';
+        this.userForm.get('email')?.setErrors({ emailExists: true });
+      }
+    });
+
+    // Phone validation
+    this.userForm.get('phone')?.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(phone => {
+        if (!phone || phone === '') return of(null);
+
+        this.validating.phone = true;
+        this.errorMessages.phone = '';
+
+        return this.userService.checkPhoneExists(phone).pipe(
+          finalize(() => {
+            this.validating.phone = false;
+          }),
+          catchError(() => {
+            this.errorMessages.phone = 'Error checking phone availability';
+            return of({ exists: false });
+          })
+        );
+      })
+    ).subscribe(response => {
+      if (response && response.exists) {
+        this.errorMessages.phone = 'This phone number is already in use';
+        this.userForm.get('phone')?.setErrors({ phoneExists: true });
+      }
+    });
+
+    // Name validation (if username uniqueness is required)
+    this.userForm.get('name')?.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(name => {
+        if (!name || name === '') return of(null);
+
+        this.validating.name = true;
+        this.errorMessages.name = '';
+
+        return this.userService.checkNameExists(name).pipe(
+          finalize(() => {
+            this.validating.name = false;
+          }),
+          catchError(() => {
+            this.errorMessages.name = 'Error checking username availability';
+            return of({ exists: false });
+          })
+        );
+      })
+    ).subscribe(response => {
+      if (response && response.exists) {
+        this.errorMessages.name = 'This username is already taken';
+        this.userForm.get('name')?.setErrors({ nameExists: true });
+      }
+    });
+
+    // Employee ID validation (assuming it must be unique)
+    this.userForm.get('employeeId')?.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(employeeId => {
+        if (!employeeId || employeeId === '') return of(null);
+
+        this.validating['employeeId'] = true;
+        this.errorMessages['employeeId'] = '';
+
+        return this.userService.checkEmployeeIdExists(employeeId).pipe(
+          finalize(() => {
+            this.validating['employeeId'] = false;
+          }),
+          catchError(() => {
+            this.errorMessages['employeeId'] = 'Error checking employee ID';
+            return of({ exists: false });
+          })
+        );
+      })
+    ).subscribe(response => {
+      if (response && response.exists) {
+        this.errorMessages['employeeId'] = 'This employee ID is already in use';
+        this.userForm.get('employeeId')?.setErrors({ employeeIdExists: true });
+      }
     });
   }
 
@@ -108,16 +267,40 @@ export class UserAddComponent implements OnInit {
       next: (res: any) => {
         const userData = res.data.user;
 
+        // Redirect if trying to edit super admin
+        if (userData.isSuperAdmin) {
+          this.message.error('Super Admin user cannot be modified');
+          this.router.navigate(['/users/manage']);
+          return;
+        }
+
+        // Extract address fields if they exist
+        const address = userData.address || {};
 
         this.userForm.patchValue({
-          name: userData.name,
-          email: userData.email,
-          phone: userData.phone,
-          date_of_birth: userData.date_of_birth,
+          firstName: userData.firstName || '',
+          middleName: userData.middleName || '',
+          lastName: userData.lastName || '',
+          displayName: userData.displayName || '',
+          email: userData.email || '',
+          phone: userData.phone || '',
+          date_of_birth: userData.date_of_birth || '',
+          gender: userData.gender || '',
+          address: {
+            street: address.street || '',
+            city: address.city || '',
+            state: address.state || '',
+            zipCode: address.zipCode || '',
+            country: address.country || ''
+          },
+          employeeId: userData.employeeId || '',
+          department: userData.department || '',
+          position: userData.position || '',
+          joiningDate: userData.joiningDate || '',
           is_active: userData.is_active
         });
 
-
+        // Handle permissions patching
         if (userData.permissions && Array.isArray(userData.permissions)) {
           this.patchPermissions(userData.permissions);
         }
@@ -170,10 +353,101 @@ export class UserAddComponent implements OnInit {
       return;
     }
 
-
+    // Additional validation before submission
     const formValue = {...this.userForm.getRawValue()};
 
+    // First validate the unique fields if this is an Add operation
+    if (this.operation === 'Add') {
+      this.validateUniqueFields(formValue).then(isValid => {
+        if (isValid) {
+          this.saveUser(formValue);
+        }
+      });
+    } else {
+      // For edit, we can proceed directly as fields that shouldn't change are disabled
+      this.saveUser(formValue);
+    }
+  }
 
+  validateUniqueFields(formValue: any): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      // Check all unique fields in parallel
+      const email = formValue.email;
+      const phone = formValue.phone;
+      const name = formValue.name;
+
+      let validationPromises = [];
+
+      if (email) {
+        validationPromises.push(
+          this.userService.checkEmailExists(email).toPromise()
+            .then(response => {
+              if (response && response.exists) {
+                this.errorMessages.email = 'This email is already in use';
+                this.userForm.get('email')?.setErrors({ emailExists: true });
+                return false;
+              }
+              return true;
+            })
+            .catch(() => {
+              this.message.error('Error checking email availability');
+              return false;
+            })
+        );
+      }
+
+      if (phone) {
+        validationPromises.push(
+          this.userService.checkPhoneExists(phone).toPromise()
+            .then(response => {
+              if (response && response.exists) {
+                this.errorMessages.phone = 'This phone number is already in use';
+                this.userForm.get('phone')?.setErrors({ phoneExists: true });
+                return false;
+              }
+              return true;
+            })
+            .catch(() => {
+              this.message.error('Error checking phone availability');
+              return false;
+            })
+        );
+      }
+
+      if (name) {
+        validationPromises.push(
+          this.userService.checkNameExists(name).toPromise()
+            .then(response => {
+              if (response && response.exists) {
+                this.errorMessages.name = 'This username is already taken';
+                this.userForm.get('name')?.setErrors({ nameExists: true });
+                return false;
+              }
+              return true;
+            })
+            .catch(() => {
+              this.message.error('Error checking username availability');
+              return false;
+            })
+        );
+      }
+
+      // Wait for all validations to complete
+      Promise.all(validationPromises)
+        .then(results => {
+          // If any validation failed, return false
+          const isValid = results.every(result => result === true);
+          resolve(isValid);
+        })
+        .catch(() => {
+          this.message.error('Error during validation');
+          resolve(false);
+        });
+    });
+  }
+
+  saveUser(formValue: any): void {
+    // Process modulePermissions
     const modulePermissions = formValue.modulePermissions || [];
     formValue.permissions = modulePermissions
       .filter((module: {moduleName: string; permissions: string[]}) => module.permissions && module.permissions.length > 0)
@@ -182,8 +456,10 @@ export class UserAddComponent implements OnInit {
         permissions: module.permissions
       }));
 
-
     delete formValue.modulePermissions;
+
+    // Combine name fields for backwards compatibility
+    formValue.name = formValue.displayName;
 
     switch (this.operation) {
       case 'Add':
@@ -194,7 +470,11 @@ export class UserAddComponent implements OnInit {
             this.message.success('User created successfully');
           },
           error: (err) => {
-            this.message.error('Failed to create user: ' + err.message);
+            if (err.error && err.error.message) {
+              this.message.error(err.error.message);
+            } else {
+              this.message.error('Failed to create user: ' + err.message);
+            }
           },
         });
         break;
@@ -206,7 +486,11 @@ export class UserAddComponent implements OnInit {
             this.message.success('User updated successfully');
           },
           error: (err) => {
-            this.message.error('Failed to update user: ' + err.message);
+            if (err.error && err.error.message) {
+              this.message.error(err.error.message);
+            } else {
+              this.message.error('Failed to update user: ' + err.message);
+            }
           },
         });
         break;

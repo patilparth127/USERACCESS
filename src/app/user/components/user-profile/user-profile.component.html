@@ -1,0 +1,171 @@
+<nav aria-label="breadcrumb" class="p-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/home"><i class="bi bi-house-door"></i></a></li>
+    <li class="breadcrumb-item"><a routerLink="/users/manage">Users</a></li>
+    <li class="breadcrumb-item active">User Profile</li>
+  </ol>
+</nav>
+
+<div class="">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4>User Profile</h4>
+      <div *ngIf="canUpdateUser">
+        <a [routerLink]="['/users/edit', userId]" class="btn btn-primary btn-sm">
+          <i class="bi bi-pencil me-1"></i> Edit Profile
+        </a>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="loading" class="d-flex justify-content-center p-5">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!loading && user !== null">
+        <div class="row mb-4">
+          <div class="col-md-3 text-center mb-4 mb-md-0">
+            <div class="avatar-container mb-3">
+              <div class="avatar-circle">
+                <span class="initials">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</span>
+              </div>
+            </div>
+            <h4>{{ user.firstName }} {{ user.lastName }}</h4>
+            <p class="text-muted mb-2">{{ user.position || 'No position specified' }}</p>
+
+            <span class="badge rounded-pill mb-3" [ngClass]="user.is_active ? 'bg-success' : 'bg-danger'">
+              {{ user.is_active ? "Active" : "Inactive" }}
+            </span>
+
+            <div *ngIf="user.employeeId" class="mb-2">
+              <small class="text-muted">Employee ID: {{ user.employeeId }}</small>
+            </div>
+          </div>
+
+          <div class="col-md-9">
+            <ul class="nav nav-tabs" id="userProfileTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button">
+                  Personal Information
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button">
+                  Contact & Address
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="employment-tab" data-bs-toggle="tab" data-bs-target="#employment" type="button">
+                  Employment Details
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content p-3 border border-top-0 rounded-bottom" id="userProfileTabContent">
+              <!-- Personal Information Tab -->
+              <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th style="width: 30%">Full Name</th>
+                      <td>{{ user.firstName }} {{ user.middleName ? user.middleName + ' ' : '' }}{{ user.lastName }}</td>
+                    </tr>
+                    <tr>
+                      <th>Display Name</th>
+                      <td>{{ user.displayName || (user.firstName + ' ' + user.lastName) }}</td>
+                    </tr>
+                    <tr>
+                      <th>Gender</th>
+                      <td>{{ user.gender ? (user.gender | titlecase) : 'Not specified' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Date of Birth</th>
+                      <td>{{ user.date_of_birth | date:'mediumDate' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Member Since</th>
+                      <td>{{ user.createdAt | date:'medium' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Last Updated</th>
+                      <td>{{ user.updatedAt | date:'medium' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Contact & Address Tab -->
+              <div class="tab-pane fade" id="contact" role="tabpanel">
+                <h5 class="mb-3">Contact Information</h5>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th style="width: 30%">Email</th>
+                      <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                      <th>Phone</th>
+                      <td>{{ user.phone }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h5 class="mb-3 mt-4">Address</h5>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th style="width: 30%">Street</th>
+                      <td>{{ user.address?.street || 'Not provided' }}</td>
+                    </tr>
+                    <tr>
+                      <th>City</th>
+                      <td>{{ user.address?.city || 'Not provided' }}</td>
+                    </tr>
+                    <tr>
+                      <th>State/Province</th>
+                      <td>{{ user.address?.state || 'Not provided' }}</td>
+                    </tr>
+                    <tr>
+                      <th>ZIP/Postal Code</th>
+                      <td>{{ user.address?.zipCode || 'Not provided' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Country</th>
+                      <td>{{ user.address?.country || 'Not provided' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Employment Details Tab -->
+              <div class="tab-pane fade" id="employment" role="tabpanel">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th style="width: 30%">Employee ID</th>
+                      <td>{{ user.employeeId || 'Not assigned' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Department</th>
+                      <td>{{ user.department || 'Not assigned' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Position</th>
+                      <td>{{ user.position || 'Not assigned' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Joining Date</th>
+                      <td>{{ user.joiningDate | date:'mediumDate' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

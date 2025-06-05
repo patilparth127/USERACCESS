@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   isSubmitting = false;
   errorMessage = '';
-  returnUrl = '/home';
+  returnUrl = '/auth/profile'; // Changed from /home to /auth/profile
 
   constructor(
     private fb: FormBuilder,
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
     });
 
 
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/auth/profile';
 
 
     if (this.authService.isAuthenticated()) {
@@ -40,14 +40,15 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Reset error message
+    this.errorMessage = '';
 
+    // Check if form is valid
     if (this.loginForm.invalid) {
       return;
     }
 
     this.isSubmitting = true;
-    this.errorMessage = '';
-
     const { email, password } = this.loginForm.value;
 
     this.authService.login(email, password)

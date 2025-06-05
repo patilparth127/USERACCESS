@@ -88,6 +88,13 @@ export class UserPermissionsComponent implements OnInit {
     this.userService.getUserById(this.userId).subscribe({
       next: (response: any) => {
         this.user = response.data.user;
+
+        // Redirect if trying to edit super admin permissions or if user doesn't exist
+        if (this.user.isSuperAdmin || this.userService.isSuperAdmin(this.user)) {
+          this.router.navigate(['/users/manage']);
+          return;
+        }
+
         this.patchPermissionValues();
         this.loading = false;
       },

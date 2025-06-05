@@ -33,6 +33,15 @@ export class AccessService {
 
     try {
       const currentUser = JSON.parse(userJson);
+
+      // If the user is a super admin, they have access to all modules
+      if (this.isSuperAdmin(currentUser)) {
+        const allModules = ['User', 'Report', 'File', 'Setting', 'Dashboard'];
+        this.accessibleModulesSubject.next(allModules);
+        return of(allModules);
+      }
+
+
       if (!currentUser || !currentUser.permissions || !Array.isArray(currentUser.permissions)) {
         this.accessibleModulesSubject.next([]);
         return of([]);
@@ -62,6 +71,10 @@ export class AccessService {
   }
 
   private isAdmin(user: any): boolean {
+    // Super admin is always an admin
+    if (this.isSuperAdmin(user)) return true;
+
+
     if (!user || !user.permissions || !Array.isArray(user.permissions)) {
       return false;
     }
@@ -112,7 +125,8 @@ export class AccessService {
       const currentUser = JSON.parse(userJson);
 
 
-      if (this.isAdmin(currentUser)) {
+      // Super admin has all permissions
+      if (this.isSuperAdmin(currentUser)) {
         this.permissionCache.set(permission, true);
         return of(true);
       }
@@ -155,5 +169,18 @@ export class AccessService {
   clearCache(): void {
     this.permissionCache.clear();
     this.accessibleModulesSubject.next([]);
+  }
+
+  // Helper method to check if a user is a super admin
+  private isSuperAdmin(user: any): boolean {
+    if (!user) return false;
+
+    // Check for explicit super admin flag
+    if (user.isSuperAdmin === true) return true;
+
+    // Check for super admin email (assuming admin@system.com is the super admin)
+    if (user.email === 'admin@system.com') return true;
+
+    return false;
   }
 }

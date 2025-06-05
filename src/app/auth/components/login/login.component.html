@@ -10,6 +10,12 @@
             {{ errorMessage }}
           </div>
 
+          <!-- Super Admin Login Hint -->
+          <div class="alert alert-info mb-3">
+            <strong>Super Admin Access:</strong>
+            <p class="mb-0">Email: admin&#64;system.com<br>Password: SuperSecurePassword123!</p>
+          </div>
+
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
             <div class="mb-3">

@@ -1,0 +1,28 @@
+.avatar-container {
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-circle {
+  width: 100px;
+  height: 100px;
+  background-color: #007bff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.initials {
+  font-size: 2.5rem;
+  font-weight: 500;
+}
+
+.tab-content {
+  min-height: 300px;
+}
+
+th {
+  background-color: #f8f9fa;
+}

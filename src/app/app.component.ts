@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './auth/services/auth.service';
 import { filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { InitComponent } from './core/components/init/init.component';
+import { SUPER_ADMIN_USER } from './core/mocks/super-admin.mock';
 
 interface SidenavItem {
   label: string;
@@ -22,7 +24,8 @@ interface SidenavItem {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  standalone: false
 })
 export class AppComponent implements OnInit {
   isCollapsed = false;
@@ -73,6 +76,10 @@ export class AppComponent implements OnInit {
     private authService: AuthService
   ) {}
   ngOnInit(): void {
+    // This will ensure the InitComponent is created and runs its initialization
+    const initComponent = new InitComponent();
+    initComponent.ngOnInit();
+
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
 
@@ -86,6 +93,9 @@ export class AppComponent implements OnInit {
     ).subscribe(() => {
       this.updateSelectedState();
     });
+
+    // Initialize super admin directly here
+    this.initializeSuperAdmin();
   }
 
   toggleCollapsed(event: any): void {
@@ -161,5 +171,35 @@ export class AppComponent implements OnInit {
     }
 
     return this.authService.hasPermission(item.permission);
+  }
+
+  getStaticMenuItems(): any[] {
+    return [
+      {
+        label: 'Profile',
+        iconName: 'person',
+        link: '/auth/profile',
+        children: []
+      },
+      ...this.SIDENAV_ITEMS
+    ];
+  }
+
+  private initializeSuperAdmin(): void {
+    // Check if super admin exists in localStorage
+    const existingUsers = localStorage.getItem('users');
+    let users = existingUsers ? JSON.parse(existingUsers) : [];
+
+    // Check if super admin already exists
+    const superAdminExists = users.some((u: any) =>
+      u.email === 'admin@system.com' || u.isSuperAdmin === true
+    );
+
+    if (!superAdminExists) {
+      // Add super admin to users
+      users.push(SUPER_ADMIN_USER);
+      localStorage.setItem('users', JSON.stringify(users));
+      console.log('Super admin user initialized');
+    }
   }
 }

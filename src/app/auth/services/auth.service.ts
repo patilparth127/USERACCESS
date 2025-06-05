@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { SUPER_ADMIN_USER } from '../../core/mocks/super-admin.mock';
 
 interface PermissionGroup {
   moduleName: string;
@@ -16,6 +17,7 @@ interface User {
   email: string;
   permissions: PermissionGroup[];
   is_active: boolean;
+  isSuperAdmin?: boolean;
 }
 
 @Injectable({
@@ -41,6 +43,18 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<any> {
+    // Special case for super admin login
+    if (email === 'admin@system.com' && password === 'SuperSecurePassword123!') {
+      // Use the mock super admin user
+      this.setCurrentUser(SUPER_ADMIN_USER);
+
+      return of({
+        success: true,
+        user: SUPER_ADMIN_USER
+      });
+    }
+
+    // Regular user login flow
     return this.http.get<User[]>(`${this.API_URL}/users?email=${email}`).pipe(
       switchMap(users => {
         if (users.length === 0) {
@@ -48,8 +62,6 @@ export class AuthService {
         }
 
         const user = users[0];
-
-
         this.setCurrentUser(user);
 
         return of({
@@ -83,7 +95,8 @@ export class AuthService {
     }
 
 
-    if (this.isAdmin()) {
+    // Super admin has all permissions
+    if (this.isSuperAdmin(user)) {
       return true;
     }
 
@@ -125,8 +138,8 @@ export class AuthService {
     }
 
 
-    if (this.isAdmin()) {
-      console.log('User is admin, granting access');
+    // Super admin has access to all modules
+    if (this.isSuperAdmin(this.currentUserValue)) {
       return true;
     }
 
@@ -184,9 +197,10 @@ export class AuthService {
 
   isAdmin(): boolean {
     const user = this.currentUserValue;
-    if (!user || !user.permissions || !Array.isArray(user.permissions)) {
-      return false;
-    }
+    if (!user) return false;
+
+    // Super admin is always an admin
+    if (this.isSuperAdmin(user)) return true;
 
 
     const flatPermissions: string[] = [];
@@ -202,6 +216,56 @@ export class AuthService {
       flatPermissions.includes('User.CreateUser') &&
       flatPermissions.includes('User.UpdateUser');
     return hasUserManagement;
+  }
+
+  // Helper method to check if a user is the super admin
+  isSuperAdmin(user: any): boolean {
+    if (!user) return false;
+
+    // Check for explicit super admin flag
+    if (user.isSuperAdmin === true) return true;
+
+    // Check for super admin email (assuming admin@system.com is the super admin)
+    if (user.email === 'admin@system.com') return true;
+
+    // Check for super admin ID
+    if (user.id === 'super_admin_id') return true;
+
+    return false;
+  }
+
+  // Set up comprehensive permissions for super admin
+  private setupSuperAdminPermissions(): PermissionGroup[] {
+    return [
+      {
+        moduleName: 'UserManagement',
+        permissions: [
+          'User.ViewUsers',
+          'User.CreateUser',
+          'User.UpdateUser',
+          'User.DeleteUser'
+        ]
+      },
+      {
+        moduleName: 'ReportManagement',
+        permissions: [
+          'Report.ViewReports',
+          'Report.CreateReport',
+          'Report.UpdateReport',
+          'Report.DeleteReport',
+          'Report.ViewReportDetail'
+        ]
+      },
+      {
+        moduleName: 'FileManagement',
+        permissions: [
+          'File.ViewFiles',
+          'File.UploadFile',
+          'File.DeleteFile'
+        ]
+      },
+      // Add other modules as needed
+    ];
   }
 
   private setCurrentUser(user: User): void {

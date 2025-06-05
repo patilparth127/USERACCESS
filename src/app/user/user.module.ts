@@ -6,12 +6,14 @@ import { UserManageComponent } from './components/user.manage/user.manage.compon
 import { UserAddComponent } from './components/user.add/user.add.component';
 import { UserPermissionsComponent } from './components/user.permissions/user.permissions.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
     UserManageComponent,
     UserAddComponent,
-    UserPermissionsComponent
+    UserPermissionsComponent,
+    UserProfileComponent
   ],
 
   imports: [

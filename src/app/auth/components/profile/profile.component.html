@@ -7,37 +7,99 @@
 
 <div class="container py-4">
   <div class="row">
-    <div class="col-md-8 mx-auto">
+    <div class=" mx-auto">
       <div class="card shadow">
         <div class="card-header bg-primary text-white">
           <h5 class="mb-0">User Profile</h5>
         </div>
         <div class="card-body" *ngIf="user">
-          <div class="d-flex align-items-center mb-4">
-            <div class="bg-light rounded-circle p-3 me-4">
-              <i class="bi bi-person-fill fs-1"></i>
-            </div>
-            <div>
-              <h3>{{ user.name }}</h3>
-              <span class="badge rounded-pill" [ngClass]="user.is_active ? 'bg-success' : 'bg-danger'">
-                {{ user.is_active ? 'Active' : 'Inactive' }}
-              </span>
-            </div>
+          <div class="profile-header text-center">
+            <div class="profile-avatar">{{ getInitials() }}</div>
+            <h2>{{ user?.firstName || '' }} {{ user?.lastName || '' }}</h2>
+            <p class="text-muted">{{ user?.email }}</p>
           </div>
 
-          <div class="row g-3">
-            <div class="col-md-6">
-              <p><strong>Email:</strong> {{ user.email }}</p>
-            </div>
-            <div class="col-md-6">
-              <p><strong>Role:</strong> {{ user.role_name }}</p>
-            </div>
-            
-            <div class="col-md-6" *ngIf="user.phone">
-              <p><strong>Phone:</strong> {{ user.phone }}</p>
-            </div>
-            <div class="col-md-6" *ngIf="user.date_of_birth">
-              <p><strong>Date of Birth:</strong> {{ user.date_of_birth | date }}</p>
+          <div class="container pb-5">
+            <div class="row">
+              <div class="col-md-4 mb-4">
+                <div class="card info-card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-person-badge me-2"></i>Personal Information</h5>
+                    <hr>
+                    <ul class="list-unstyled">
+                      <li class="mb-2">
+                        <strong>Full Name:</strong> {{ user?.firstName || '' }} {{ user?.middleName || '' }} {{ user?.lastName || '' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Display Name:</strong> {{ user?.displayName || user?.name || 'Not set' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Email:</strong> {{ user?.email || 'Not set' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Phone:</strong> {{ user?.phone || 'Not set' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Date of Birth:</strong> {{ user?.date_of_birth | date:'mediumDate'  }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Gender:</strong> {{ user?.gender || 'Not set' }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <div class="card info-card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-briefcase me-2"></i>Work Information</h5>
+                    <hr>
+                    <ul class="list-unstyled">
+                      <li class="mb-2">
+                        <strong>Department:</strong> {{ user?.department || 'Not set' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Position:</strong> {{ user?.position || 'Not set' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Employee ID:</strong> {{ user?.employeeId || 'Not set' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Joining Date:</strong> {{ user?.joiningDate | date:'mediumDate' }}
+                      </li>
+                      <li class="mb-2">
+                        <strong>Status:</strong>
+                        <span class="badge" [ngClass]="user?.is_active ? 'bg-success' : 'bg-danger'">
+                          {{ user?.is_active ? 'Active' : 'Inactive' }}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <div class="card info-card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-shield-check me-2"></i>Access Information</h5>
+                    <hr>
+                    <p>
+                      <strong>Total Permissions:</strong>
+                      <span class="badge bg-primary">{{ getTotalPermissions() }}</span>
+                    </p>
+
+                    <div *ngFor="let group of user?.permissions" class="mb-3">
+                      <h6 class="fw-bold">{{ group.moduleName }}</h6>
+                      <ul class="ps-3">
+                        <li *ngFor="let permission of group.permissions" class="small text-muted">
+                          {{ permission }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
