@@ -23,8 +23,8 @@ export class HttpInterceptorService implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.loadingService.show();
-    
-    // Skip interceptor for login requests to avoid circular dependency
+
+
     if (request.headers.has('Skip-Interceptor')) {
       const newHeaders = request.headers.delete('Skip-Interceptor');
       const newRequest = request.clone({ headers: newHeaders });
@@ -34,18 +34,18 @@ export class HttpInterceptorService implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         console.log('API Error', error);
-        
-        // Handle authentication errors
+
+
         if (error.status === 401) {
           this.authService.logout();
           this.router.navigate(['/auth/login']);
         }
-        
-        // Handle connection errors with better messages
+
+
         if (error.status === 0) {
           console.error('Cannot connect to API server. Please ensure JSON Server is running.');
         }
-        
+
         return throwError(() => error);
       }),
       finalize(() => {

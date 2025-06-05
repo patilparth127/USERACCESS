@@ -27,7 +27,7 @@ export class SidebarComponent {
   @Input() isCollapsed: boolean = false;
   @Input() menuItems: SidenavItem[] = [];
   @Output() toggleSidebar = new EventEmitter<boolean>();
-  
+
   constructor(
     private router: Router,
     private authService: AuthService
@@ -39,9 +39,9 @@ export class SidebarComponent {
 
   hasPermissionForMenuItem(item: SidenavItem | { permission?: string }): boolean {
     if (!item.permission) {
-      return true; // No permission required
+      return true;
     }
-    
+
     const result = this.authService.hasPermission(item.permission);
     return result;
   }

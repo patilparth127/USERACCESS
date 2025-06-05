@@ -5,7 +5,7 @@ export interface Report {
   description: string;
   status: 'Active' | 'Draft' | 'Archived';
   isActive: boolean;
-  image?: string; // Base64 encoded image
+  image?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -15,7 +15,7 @@ export interface CreateReportRequest {
   type: string;
   description: string;
   isActive: boolean;
-  image?: string; // Base64 encoded image
+  image?: string;
 }
 
 export interface UpdateReportRequest {
@@ -24,5 +24,5 @@ export interface UpdateReportRequest {
   description?: string;
   status?: 'Active' | 'Draft' | 'Archived';
   isActive?: boolean;
-  image?: string; // Base64 encoded image
+  image?: string;
 }

@@ -6,5 +6,5 @@ export interface FileRecord {
   uploadedAt: Date | string;
   description?: string;
   category?: string;
-  content: string; // base64 encoded content
+  content: string;
 }

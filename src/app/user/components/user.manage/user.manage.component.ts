@@ -32,10 +32,10 @@ export class UserManageComponent implements OnInit {
   ngOnInit(): void {
     this.getList();
 
-    // Load permissions
+
     this.accessService.loadModulePermissions(['Users']).subscribe();
 
-    // Check individual permissions
+
     this.accessService.hasPermission('User.CreateUser').subscribe(
       can => this.canCreateUser = can
     );
@@ -52,7 +52,7 @@ export class UserManageComponent implements OnInit {
   getList(): void {
     this.userService.getUsers().subscribe((response: any) => {
       this.users = response.data.users;
-      // Display permissions directly instead of role name
+
     });
   }
 

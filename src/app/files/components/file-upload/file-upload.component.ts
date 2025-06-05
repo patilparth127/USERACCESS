@@ -62,11 +62,11 @@ export class FileUploadComponent {
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      const maxSizeInBytes = 50 * 1024; // 50KB
+      const maxSizeInBytes = 50 * 1024;
 
       if (file.size > maxSizeInBytes) {
         alert('File size must be less than 50KB. Please select a smaller file.');
-        event.target.value = ''; // Clear the file input
+        event.target.value = '';
         this.selectedFile = null;
         return;
       }

@@ -22,7 +22,6 @@ import { CoreModule } from "./core/core.module";
     CoreModule
 ],
   providers: [
-    // Make sure interceptors are only registered here, not in CoreModule or elsewhere
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpInterceptorService,

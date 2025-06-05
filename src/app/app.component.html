@@ -1,5 +1,4 @@
 <div class="app-container">
-  <!-- Loading overlay -->
   <div *ngIf="isLoading$ | async" class="loading-overlay">
     <div class="spinner-container">
       <div class="spinner-border text-primary" role="status">
@@ -8,7 +7,7 @@
     </div>
   </div>
 
-  <!-- Header -->
+
   <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
       User Access System</a>
@@ -18,10 +17,10 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Add search box or other header elements here -->
+
     <div class="w-100"></div>
 
-    <!-- Logout button -->
+
     <div class="navbar-nav" *ngIf="isAuthenticated">
       <div class="nav-item text-nowrap">
         <button class="btn btn-outline-light mx-3" (click)="logout()">
@@ -33,7 +32,7 @@
 
   <div class="container-fluid">
     <div class="row flex-nowrap">
-      <!-- Sidebar Component -->
+
       <div class="col-auto p-0 sidebar-wrapper" *ngIf="isAuthenticated">
         <app-sidebar
           [isCollapsed]="isCollapsed"
@@ -42,55 +41,10 @@
         </app-sidebar>
       </div>
 
-      <!-- Main content area -->
+
       <main class="col py-3">
         <router-outlet></router-outlet>
       </main>
     </div>
   </div>
 </div>
-
-<style>
-  .app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  .content-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 1050;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .sidebar {
-    width: 250px;
-    height: 100vh;
-    position: fixed;
-    transition: all 0.3s;
-    z-index: 1000;
-  }
-  .sidebar.collapsed {
-    width: 70px;
-  }
-  .content-area {
-    margin-left: 250px;
-    transition: all 0.3s;
-  }
-  .sidebar.collapsed + .content-area {
-    margin-left: 70px;
-  }
-  .main-content {
-    min-height: calc(100vh - 120px);
-  }
-</style>

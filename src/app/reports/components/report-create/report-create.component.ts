@@ -132,7 +132,7 @@ export class ReportCreateComponent implements OnInit {
   ngOnInit() {
     this.initForm();
 
-    // Check if we're in edit mode
+
     this.reportId = this.route.snapshot.paramMap.get('id');
     if (this.reportId) {
       this.isEditMode = true;
@@ -140,7 +140,7 @@ export class ReportCreateComponent implements OnInit {
     }
   }
 
-  // Convenience getter for easy access to form fields
+
   get f() {
     return this.reportForm.controls;
   }
@@ -205,7 +205,7 @@ export class ReportCreateComponent implements OnInit {
     };
 
     if (this.isEditMode && this.reportId && this.currentReport) {
-      // Update existing report - merge with current data
+
       const updateData = {
         ...this.currentReport,
         ...reportData,
@@ -224,7 +224,7 @@ export class ReportCreateComponent implements OnInit {
         }
       });
     } else {
-      // Create new report
+
       this.reportService.create(reportData).subscribe({
         next: () => {
           alert('Report created successfully!');

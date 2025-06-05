@@ -22,7 +22,7 @@ export class UserAddComponent implements OnInit {
   btnName = 'Add User';
   userForm!: FormGroup;
 
-  // Define the permission modules here
+
   permissionModules: any[] = [
     {
       name: 'UserManagement',
@@ -108,7 +108,7 @@ export class UserAddComponent implements OnInit {
       next: (res: any) => {
         const userData = res.data.user;
 
-        // Patch basic user data
+
         this.userForm.patchValue({
           name: userData.name,
           email: userData.email,
@@ -117,7 +117,7 @@ export class UserAddComponent implements OnInit {
           is_active: userData.is_active
         });
 
-        // Handle permissions
+
         if (userData.permissions && Array.isArray(userData.permissions)) {
           this.patchPermissions(userData.permissions);
         }
@@ -130,17 +130,17 @@ export class UserAddComponent implements OnInit {
   }
 
   patchPermissions(permissionGroups: PermissionGroup[]): void {
-    // Get the form array
+
     const modulePermissionsArray = this.userForm.get('modulePermissions') as FormArray;
 
-    // Update each module group with their permissions
+
     permissionGroups.forEach(permGroup => {
-      // Find the matching form group
+
       const formGroupIndex = this.permissionModules.findIndex(m =>
         m.name === permGroup.moduleName);
 
       if (formGroupIndex !== -1 && modulePermissionsArray.at(formGroupIndex)) {
-        // Set the permissions for this module
+
         modulePermissionsArray.at(formGroupIndex).get('permissions')?.setValue(
           permGroup.permissions || []
         );
@@ -148,7 +148,7 @@ export class UserAddComponent implements OnInit {
     });
   }
 
-  // Add this helper method to check if a permission is selected
+
   isPermissionSelected(moduleIndex: number, permValue: string): boolean {
     const modulePermissions = this.userForm.get('modulePermissions') as FormArray;
     if (!modulePermissions || !modulePermissions.at(moduleIndex)) {
@@ -170,10 +170,10 @@ export class UserAddComponent implements OnInit {
       return;
     }
 
-    // Format the permissions into the expected format for the API
+
     const formValue = {...this.userForm.getRawValue()};
 
-    // Convert modulePermissions array to expected API format
+
     const modulePermissions = formValue.modulePermissions || [];
     formValue.permissions = modulePermissions
       .filter((module: {moduleName: string; permissions: string[]}) => module.permissions && module.permissions.length > 0)
@@ -182,7 +182,7 @@ export class UserAddComponent implements OnInit {
         permissions: module.permissions
       }));
 
-    // Remove the modulePermissions property before sending
+
     delete formValue.modulePermissions;
 
     switch (this.operation) {
@@ -190,7 +190,7 @@ export class UserAddComponent implements OnInit {
         this.userService.createUser(formValue).subscribe({
           next: () => {
             this.userForm.reset();
-            this.initializeForm(); // Reset with fresh form groups
+            this.initializeForm();
             this.message.success('User created successfully');
           },
           error: (err) => {
@@ -221,7 +221,7 @@ export class UserAddComponent implements OnInit {
     return this.operation === 'Add' ? 'Add User' : 'Update User';
   }
 
-  // Helper methods for permission handling
+
   selectAllModulePermissions(moduleIndex: number): void {
     const moduleFormGroup = (this.userForm.get('modulePermissions') as FormArray).at(moduleIndex);
     const module = this.permissionModules[moduleIndex];
@@ -229,14 +229,14 @@ export class UserAddComponent implements OnInit {
     const currentPermissions = [...moduleFormGroup.get('permissions')?.value || []];
     const modulePermissionValues = module.permissions.map((p: any) => p.value);
 
-    // Check if all permissions in this module are already selected
+
     const allSelected = modulePermissionValues.every((p: string) => currentPermissions.includes(p));
 
     if (allSelected) {
-      // If all are selected, deselect all
+
       moduleFormGroup.get('permissions')?.setValue([]);
     } else {
-      // Add all module permissions
+
       moduleFormGroup.get('permissions')?.setValue([...modulePermissionValues]);
     }
   }
@@ -268,12 +268,12 @@ export class UserAddComponent implements OnInit {
     const permissions = moduleFormGroup.get('permissions')?.value || [];
 
     if (checkbox.checked) {
-      // Add permission if not already present
+
       if (!permissions.includes(permValue)) {
         moduleFormGroup.get('permissions')?.setValue([...permissions, permValue]);
       }
     } else {
-      // Remove permission
+
       moduleFormGroup.get('permissions')?.setValue(
         permissions.filter((p: string) => p !== permValue)
       );

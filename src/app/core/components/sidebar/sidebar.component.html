@@ -4,19 +4,18 @@
       <i class="bi" [ngClass]="isCollapsed ? 'bi-arrow-right' : 'bi-arrow-left'"></i>
     </button>
   </div>
-  
+
   <ul class="nav flex-column">
     <li class="nav-item" *ngFor="let item of menuItems">
-      <a class="nav-link d-flex align-items-center" [routerLink]="item.link" 
+      <a class="nav-link d-flex align-items-center" [routerLink]="item.link"
          routerLinkActive="active" [ngClass]="{'active': item.selected}">
         <i class="bi bi-{{ item.iconName }} me-2"></i>
         <span class="sidebar-item-text">{{ item.label }}</span>
       </a>
-      
-      <!-- Submenu items -->
+
       <ul class="nav flex-column ms-3 submenu" *ngIf="item.child?.length && item.selected">
         <li class="nav-item" *ngFor="let child of item.child">
-          <a class="nav-link d-flex align-items-center" [routerLink]="child.link" 
+          <a class="nav-link d-flex align-items-center" [routerLink]="child.link"
              routerLinkActive="active" *ngIf="hasPermissionForMenuItem(child)">
             <i class="bi bi-{{ child.iconName }} me-2"></i>
             <span class="sidebar-item-text">{{ child.label }}</span>

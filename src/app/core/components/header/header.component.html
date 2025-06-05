@@ -30,7 +30,6 @@
           </ul>
         </li>
 
-        <!-- User Menu - Show when logged in -->
         <li class="nav-item dropdown" *ngIf="isLoggedIn">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
              role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,7 +50,6 @@
           </ul>
         </li>
 
-        <!-- Login/Register buttons - Show when logged out -->
         <li class="nav-item" *ngIf="!isLoggedIn">
           <a class="nav-link" routerLink="/auth/login">Login</a>
         </li>

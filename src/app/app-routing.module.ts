@@ -5,11 +5,10 @@ import { ForbiddenComponent } from './core/components/forbidden/forbidden.compon
 import { PermissionGuard } from './core/guards/permission.guard';
 import { AuthGuard } from './auth/guards/auth.guard';
 
-// Router options to ensure we scroll to top on navigation
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
   anchorScrolling: 'enabled',
-  scrollOffset: [0, 64] // [x, y] - Adjust based on your header height
+  scrollOffset: [0, 64]
 };
 
 const routes: Routes = [

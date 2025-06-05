@@ -10,14 +10,13 @@ import { AuthService } from '../../../auth/services/auth.service';
 export class HeaderComponent implements OnInit {
   isLoggedIn = false;
   user: any = null;
-  
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    // Subscribe to auth changes
     this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user;
       this.user = user;
@@ -27,15 +26,15 @@ export class HeaderComponent implements OnInit {
   logout(): void {
     this.authService.logout();
   }
-  
+
   isSelected(route: string): boolean {
     return this.router.url.startsWith(route);
   }
-  
+
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }
-  
+
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }

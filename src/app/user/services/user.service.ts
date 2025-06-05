@@ -10,7 +10,7 @@ interface User {
   email: string;
   phone?: string;
   date_of_birth?: string;
-  permissions: string[]; // Changed from roleId to permissions array
+  permissions: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -25,13 +25,13 @@ export class UserService {
   constructor(private readonly http: HttpClient) { }
 
   getUsers(): Observable<{ data: { users: any[] } }> {
-    // Get all users from JSON Server
+
     return this.http.get<User[]>(`${this.API_URL}/users`).pipe(
       map(users => ({
         data: {
           users: users.map(user => ({
             ...user,
-            _id: user.id, // Ensure _id exists for compatibility with existing code
+            _id: user.id,
             createdAt: user.created_at
           }))
         }
@@ -41,14 +41,14 @@ export class UserService {
   }
 
   createUser(data: any): Observable<any> {
-    // Format the user data to match JSON structure
+
     const userData = {
-      id: Date.now().toString(), // Generate ID
+      id: Date.now().toString(),
       name: data.name,
       email: data.email,
       phone: data.phone,
       date_of_birth: data.date_of_birth,
-      permissions: data.permissions || [], // Use permissions array instead of role
+      permissions: data.permissions || [],
       is_active: data.is_active,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -63,13 +63,13 @@ export class UserService {
   }
 
   searchUser(searchData: string): Observable<{ data: { users: any[] } }> {
-    // JSON Server query
+
     return this.http.get<User[]>(`${this.API_URL}/users?q=${searchData}`).pipe(
       map(users => ({
         data: {
           users: users.map(user => ({
             ...user,
-            _id: user.id // Ensure _id exists for compatibility
+            _id: user.id
           }))
         }
       })),
@@ -77,8 +77,8 @@ export class UserService {
     );
   }
 
-  // This method is no longer needed since we're not using roles
-  // but keeping for backward compatibility - it will return an empty array
+
+
   getActiveRoles(): Observable<{ data: { roles: any[] } }> {
     return new Observable(observer => {
       observer.next({ data: { roles: [] } });
@@ -92,7 +92,7 @@ export class UserService {
         data: {
           user: {
             ...user,
-            _id: user.id // Ensure _id exists for compatibility
+            _id: user.id
           }
         }
       })),
@@ -101,13 +101,13 @@ export class UserService {
   }
 
   updateUser(userId: string, data: any): Observable<any> {
-    // Format update data
+
     const updateData = {
       ...data,
       updated_at: new Date().toISOString()
     };
 
-    // Use PUT to replace the record fully
+
     return this.http.put<any>(`${this.API_URL}/users/${userId}`, updateData).pipe(
       map(user => ({
         data: { user }
@@ -116,7 +116,7 @@ export class UserService {
     );
   }
 
-  // Update deleteUser to call delete directly and return the userId
+
   deleteUser(userId: string): Observable<{ data: { userId: string } }> {
     return this.http.delete<void>(`${this.API_URL}/users/${userId}`).pipe(
       map(() => ({ data: { userId } })),
@@ -124,7 +124,7 @@ export class UserService {
     );
   }
 
-  // Add a method specifically for updating user permissions
+
   updateUserPermissions(userId: string, permissions: string[]): Observable<any> {
     return this.http.patch<any>(`${this.API_URL}/users/${userId}`, {
       permissions,

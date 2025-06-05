@@ -19,7 +19,7 @@ export class UserPermissionsComponent implements OnInit {
   permissionsForm!: FormGroup;
   loading = false;
 
-  // Module-grouped permissions structure
+
   permissionModules: any[] = [
     {
       name: 'UserManagement',
@@ -98,23 +98,23 @@ export class UserPermissionsComponent implements OnInit {
     });
   }
 
-  // Update form with user's permissions
+
   patchPermissionValues(): void {
     if (!this.user.permissions || !Array.isArray(this.user.permissions)) {
       return;
     }
 
-    // Get the form array
+
     const modulePermissionsArray = this.permissionsForm.get('modulePermissions') as any;
 
-    // Update each module group with their permissions
+
     this.user.permissions.forEach((permGroup: PermissionGroup) => {
-      // Find the matching form group
+
       const formGroupIndex = this.permissionModules.findIndex(m =>
         m.name === permGroup.moduleName);
 
       if (formGroupIndex !== -1 && modulePermissionsArray.at(formGroupIndex)) {
-        // Set the permissions for this module
+
         modulePermissionsArray.at(formGroupIndex).get('permissions')?.setValue(
           permGroup.permissions || []
         );
@@ -127,7 +127,7 @@ export class UserPermissionsComponent implements OnInit {
       return;
     }
 
-    // Convert form value to expected API format
+
     const modulePermissions = this.permissionsForm.get('modulePermissions')?.value || [];
     const permissions = modulePermissions
       .filter((module: any) => module.permissions && module.permissions.length > 0)
@@ -148,7 +148,7 @@ export class UserPermissionsComponent implements OnInit {
     });
   }
 
-  // Helper methods for bulk permission selection
+
   selectAllModulePermissions(moduleIndex: number): void {
     const moduleFormGroup = (this.permissionsForm.get('modulePermissions') as any).at(moduleIndex);
     const module = this.permissionModules[moduleIndex];
@@ -156,14 +156,14 @@ export class UserPermissionsComponent implements OnInit {
     const currentPermissions = [...moduleFormGroup.get('permissions')?.value || []];
     const modulePermissionValues = module.permissions.map((p: any) => p.value);
 
-    // Check if all permissions in this module are already selected
+
     const allSelected = modulePermissionValues.every((p: string) => currentPermissions.includes(p));
 
     if (allSelected) {
-      // If all are selected, deselect all
+
       moduleFormGroup.get('permissions')?.setValue([]);
     } else {
-      // Add all module permissions
+
       moduleFormGroup.get('permissions')?.setValue([...modulePermissionValues]);
     }
   }
@@ -199,26 +199,26 @@ export class UserPermissionsComponent implements OnInit {
     const permissions = moduleFormGroup.get('permissions')?.value || [];
 
     if (checkbox.checked) {
-      // Add permission if not already present
+
       if (!permissions.includes(permissionValue)) {
         moduleFormGroup.get('permissions')?.setValue([...permissions, permissionValue]);
       }
     } else {
-      // Remove permission
+
       moduleFormGroup.get('permissions')?.setValue(
         permissions.filter((p: string) => p !== permissionValue)
       );
     }
   }
 
-  // Helper to check if a module has any permissions selected
+
   hasModulePermissions(moduleIndex: number): boolean {
     const moduleFormGroup = (this.permissionsForm.get('modulePermissions') as any).at(moduleIndex);
     const permissions = moduleFormGroup.get('permissions')?.value || [];
     return permissions.length > 0;
   }
 
-  // Get all selected permissions in flat array for summary display
+
   getAllSelectedPermissions(): string[] {
     const modulePermissions = this.permissionsForm.get('modulePermissions')?.value || [];
     let allPermissions: string[] = [];
@@ -232,7 +232,7 @@ export class UserPermissionsComponent implements OnInit {
     return allPermissions;
   }
 
-  // Add this helper method to check if a permission is selected
+
   isPermissionSelected(moduleIndex: number, permValue: string): boolean {
     const modulePermissions = this.permissionsForm.get('modulePermissions') as FormArray;
     if (!modulePermissions || !modulePermissions.at(moduleIndex)) {

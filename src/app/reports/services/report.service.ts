@@ -11,17 +11,17 @@ export class ReportService {
   private apiUrl = 'http://localhost:3000/reports';
 
   constructor(private http: HttpClient) {}
-  // Get all reports
+
   list(): Observable<Report[]> {
     return this.http.get<Report[]>(this.apiUrl);
   }
 
-  // Get report by ID
+
   getById(id: number): Observable<Report> {
     return this.http.get<Report>(`${this.apiUrl}/${id}`);
   }
 
-  // Create new report
+
   create(report: CreateReportRequest): Observable<Report> {
     const reportData = {
       ...report,
@@ -36,7 +36,7 @@ export class ReportService {
 
     return this.http.post<Report>(this.apiUrl, reportData, { headers });
   }
-  // Update existing report - Use PUT for full update
+
   update(id: number, report: UpdateReportRequest): Observable<Report> {
     const updateData = {
       ...report,
@@ -50,7 +50,7 @@ export class ReportService {
     return this.http.put<Report>(`${this.apiUrl}/${id}`, updateData, { headers });
   }
 
-  // Alternative update method using PATCH
+
   updatePartial(id: number, report: Partial<UpdateReportRequest>): Observable<Report> {
     const updateData = {
       ...report,
@@ -64,12 +64,12 @@ export class ReportService {
     return this.http.patch<Report>(`${this.apiUrl}/${id}`, updateData, { headers });
   }
 
-  // Delete report
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Convert file to base64
+
   convertToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -79,7 +79,7 @@ export class ReportService {
     });
   }
 
-  // Get reports with permission filtering
+
   listWithPermissions(): Observable<{reports: Report[], userPermissions: string[]}> {
     const userData = JSON.parse(localStorage.getItem('current_user') || '{}');
     const reportPermissions = userData.permissions?.find((p: any) => p.moduleName === 'ReportManagement')?.permissions || [];

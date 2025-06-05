@@ -7,27 +7,26 @@
 
 <div class="d-flex justify-content-between align-items-center mt-2 p-4">
   <h2>Report Management</h2>
-  <!-- Only show Create Report button if user has permission -->
   <a *ngIf="canCreateReport" routerLink="/reports/new" class="btn btn-primary">
     <i class="bi bi-plus-circle me-2"></i> Create Report
   </a>
 </div>
 
 <div class="p-4">
-  <!-- Error message display -->
+
   <div *ngIf="errorMessage" class="alert alert-warning" role="alert">
     <i class="bi bi-exclamation-triangle me-2"></i>
     {{ errorMessage }}
   </div>
 
-  <!-- Loading spinner -->
+
   <div *ngIf="loading" class="text-center">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-  <!-- Reports table -->
+
   <div *ngIf="!loading && !errorMessage" class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -64,7 +63,7 @@
           </td>
           <td>
             <div class="d-flex gap-2">
-              <!-- View button - visible with ViewReports or ViewReportDetail permission -->
+
               <a *ngIf="canViewReports || canViewReportDetail"
                  [routerLink]="['/reports', report.id]"
                  class="btn btn-sm btn-outline-info"
@@ -72,7 +71,7 @@
                 <i class="bi bi-eye"></i>
               </a>
 
-              <!-- Edit button - only visible with UpdateReport permission -->
+
               <a *ngIf="canUpdateReport"
                  [routerLink]="['/reports', report.id, 'edit']"
                  class="btn btn-sm btn-outline-primary"
@@ -80,7 +79,7 @@
                 <i class="bi bi-pencil"></i>
               </a>
 
-              <!-- Delete button - only visible with DeleteReport permission -->
+
               <button *ngIf="canDeleteReport"
                       class="btn btn-sm btn-outline-danger"
                       title="Delete Report"
@@ -88,7 +87,7 @@
                 <i class="bi bi-trash"></i>
               </button>
 
-              <!-- No actions message if user has no permissions -->
+
               <span *ngIf="!canViewReports && !canViewReportDetail && !canUpdateReport && !canDeleteReport"
                     class="text-muted small">
                 No actions available
@@ -99,7 +98,7 @@
       </tbody>
     </table>
 
-    <!-- Empty state -->
+
     <div *ngIf="reports.length === 0" class="text-center py-4">
       <i class="bi bi-file-earmark-text display-1 text-muted"></i>
       <h5 class="mt-3 text-muted">No reports found</h5>

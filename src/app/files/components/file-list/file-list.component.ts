@@ -17,7 +17,6 @@ export class FileListComponent implements OnInit {
     private fileService: FileService
   ) {}
     ngOnInit() {
-    // Check individual permissions
     this.canUploadFile = this.authService.hasPermission('File.UploadFile');
     this.canDeleteFile = this.authService.hasPermission('File.DeleteFile');
     this.loadFiles();

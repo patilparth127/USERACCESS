@@ -29,7 +29,6 @@ export class AppComponent implements OnInit {
   isAuthenticated = false;
   isLoading$ = new BehaviorSubject<boolean>(false);
 
-  // Simplified sidebar navigation
   SIDENAV_ITEMS: SidenavItem[] = [
     {
       label: 'Home',
@@ -143,11 +142,9 @@ export class AppComponent implements OnInit {
     const currentUrl = this.router.url;
 
     this.visibleMenuItems.forEach(item => {
-      // Check if current URL starts with this item's link path
       item.selected = currentUrl === item.link ||
                      (item.link !== '/home' && currentUrl.startsWith(item.link));
 
-      // Also check child items
       item.child.forEach(child => {
         child.selected = currentUrl === child.link;
       });
@@ -160,7 +157,7 @@ export class AppComponent implements OnInit {
 
   hasPermissionForMenuItem(item: SidenavItem | { permission?: string }): boolean {
     if (!item.permission) {
-      return true; // No permission required
+      return true;
     }
 
     return this.authService.hasPermission(item.permission);
